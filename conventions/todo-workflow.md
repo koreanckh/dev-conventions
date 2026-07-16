@@ -2,13 +2,15 @@
 
 > 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
 
-`docs/to-do/*.md`(SSOT) + GitHub Issues(미러) + Projects 보드로 to-do/백로그를 관리하는 규칙.
+`docs/to-do/*.md`(SSOT) + GitHub Issues(미러) + Projects 보드로 to-do/백로그를 관리하는 규칙. 모든 항목은 `#000` 형식의 3자리 번호로 추적한다.
 `<owner/repo>`, `docs/to-do` 같은 값만 프로젝트에 맞게 바꿔 쓴다.
 
 ## 원칙
 
 - **SSOT = repo 안의 md 파일** (`docs/to-do/*.md`). GitHub Issues는 칸반/Projects용 **미러**일 뿐이다.
 - **1 주제 = 1 파일 = 1 이슈.** 관련된 것끼리 묶고, 서로 `참고` 링크로 연결한다.
+- **번호 = `#001`부터 시작하는 3자리 고정 ID.** 새 항목은 `docs/to-do/`와 `docs/to-do/done/` 전체에서 가장 큰 번호 다음 값을 배정한다. 완료 항목의 번호는 재사용하지 않는다.
+- 번호는 파일명(권장: `001-<주제>.md`), 문서 제목(`# TODO #001: <제목>`), GitHub 이슈 제목(`[ #001 ] <제목>`)에 동일하게 기록한다. 번호가 999를 넘으면 임의로 자릿수를 바꾸지 말고 규칙을 먼저 갱신한다.
 - 최상위 `docs/to-do/`엔 **남은 일만** 둔다. 완료되면 `docs/to-do/done/`으로 이동한다(날짜는 파일명이 아니라 파일 안에).
 - 예정에 없던 후속 작업이 생기면 그 자리에서 새 to-do(md + 이슈)로 남긴다.
 - 매 작업마다 **md와 이슈를 함께** 최신 상태로 유지한다(보드는 이슈에서 자동 반영).
@@ -20,8 +22,9 @@
 `docs/to-do/<주제>.md` (복사용 원본: 이 repo `templates/todo-file.template.md`):
 
 ```markdown
-# TODO: <제목>
+# TODO #000: <제목>
 
+- **번호:** #000
 - **상태:** 대기 | 진행 | 완료 (YYYY-MM-DD)
 - **이슈:** [<owner/repo>#N](https://github.com/<owner/repo>/issues/N) (미러 / 이 파일이 SSOT)
 - **등록일:** YYYY-MM-DD
@@ -35,15 +38,16 @@
 
 ## 워크플로 (순서 중요)
 
-1. **md 먼저 작성** (SSOT).
-2. 같은 내용으로 이슈 생성:
+1. **번호를 먼저 배정** — `docs/to-do/`와 `docs/to-do/done/`의 기존 번호를 확인하고 가장 큰 번호 다음의 3자리 번호를 사용한다. 파일명은 `001-<주제>.md` 형식을 권장한다.
+2. **md 먼저 작성** (SSOT). 제목과 `번호` 필드에 같은 번호를 넣는다.
+3. 같은 내용으로 이슈 생성. 이슈 제목에도 같은 번호를 넣는다:
    ```sh
    gh issue create --repo <owner/repo> \
-     --title "<제목>" \
+     --title "[ #001 ] <제목>" \
      --body-file docs/to-do/<주제>.md \
      --label "status:대기" --label "priority:<상|중|하>"
    ```
-3. **양방향 참조 연결:**
+4. **양방향 참조 연결:**
    - 이슈 본문 맨 위에 SSOT 경로 추가:
      ```sh
      { printf '> **SSOT:** `docs/to-do/<주제>.md` (이 이슈는 미러)\n\n'; cat docs/to-do/<주제>.md; } \
