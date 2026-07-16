@@ -67,6 +67,16 @@
 
 - gh 토큰이 **Issues/Projects 전용 fine-grained PAT**면 코드(Contents) API는 접근 불가하다. 코드 변경은 기존 SSH/git 경로로만.
 
+## spec/plan 연계 (무거운 to-do)
+
+to-do는 **무엇을·왜·됐나**의 SSOT다. **어떻게 만들지**(설계·구현 분해)는 별도로 spec/plan(brainstorming→spec, writing-plans→plan; `docs/superpowers/`)이 맡는다. to-do가 척추, spec/plan은 무거운 to-do에만 느슨하게 매달린다.
+
+- **언제 올리나:** 사소·기계적·자명한 to-do는 spec 없이 `손봐야 할 곳` 체크박스로 바로 처리한다. 설계 결정·여러 접근·교차 관심사·리스크가 있으면 brainstorming → spec → plan → 실행으로 간다.
+- **어디에:** spec/plan은 `docs/superpowers/`에 그대로 둔다. to-do 파일 밑으로 옮기지 않는다(superpowers 스킬 동작과 충돌 방지).
+- **연결(양방향):** to-do의 `참고` 섹션에 spec/plan 경로를, spec 상단에 대응 to-do(`docs/to-do/001-<주제>.md`, `#001`) 링크를 남긴다.
+- **생성 순서 무관:** to-do를 먼저 잡고 나중에 brainstorm해도 되고, brainstorm하다 여러 조각으로 쪼개지면 각 조각을 새 to-do로 등록해도 된다.
+- **상태는 언제나 to-do에서만** 판단한다(spec/plan은 상태를 추적하지 않는다). 실행 중 세션 내 task 체크리스트는 휘발성이라 백로그 to-do와는 별개 층이다.
+
 ---
 
 ## 이 규칙 적용하기 (새 프로젝트당 1회)
