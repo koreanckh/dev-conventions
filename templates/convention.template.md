@@ -29,7 +29,7 @@
 1. 이 문서를 대상 repo `docs/conventions/<이름>.md`로 복사하고 상단 출처 줄을 복사일로 채운다.
 2. (값이 있으면) `templates/<이름>/` 파일을 대상 repo에 복사.
 3. (셋업이 있으면) 셋업 명령을 1회 실행.
-4. `CLAUDE.md`/`AGENTS.md`의 `## 공통 규칙`에 포인터 한 줄 추가(전체 블록은 `templates/CLAUDE.snippet.md`):
+4. `AGENTS.md`의 `## 공통 규칙`에 포인터 한 줄 추가(전체 블록은 `templates/AGENTS.snippet.md`):
    ```markdown
    - <이럴 때 읽어라 힌트>: docs/conventions/<이름>.md
    ```

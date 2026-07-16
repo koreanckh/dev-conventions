@@ -32,7 +32,7 @@ AI 에이전트가 이 repo/프로젝트에서 **어떻게 일하는가**에 대
 ## 이 규칙 적용하기
 
 1. 이 문서를 대상 repo `docs/conventions/agent-workflow.md`로 복사하고 상단 출처 줄을 복사일로 채운다.
-2. `CLAUDE.md`/`AGENTS.md`의 `## 공통 규칙`에 포인터를 추가한다(전체 블록은 `templates/CLAUDE.snippet.md`). always-on 두 줄 + 포인터 한 줄:
+2. `AGENTS.md`의 `## 공통 규칙`에 포인터를 추가한다(전체 블록은 `templates/AGENTS.snippet.md`). always-on 두 줄 + 포인터 한 줄:
    ```markdown
    - 변경 착수 전 계획 제시 + 명시적 승인. 방법 전환도 재승인. (조사/질문답변은 예외)
    - pre-commit 훅 우회(`--no-verify`) 금지.

@@ -80,7 +80,7 @@
 1. 이 문서를 대상 repo `docs/conventions/coding-conventions.md`로 복사하고, 상단 출처 줄을 복사일로 채운다.
 2. **공통 규칙**은 그대로 채택. husky+lint-staged, Conventional Commits는 셋업 필요 시 위 값 사용.
 3. 쓰는 스택의 `templates/<stack>/` config 파일을 대상 repo에 복사해 eslint/prettier/tsconfig 초기값으로 삼는다.
-4. `CLAUDE.md`/`AGENTS.md`의 `## 공통 규칙` 섹션에 포인터를 추가한다. 전체 블록은 `templates/CLAUDE.snippet.md` 참고, 이 규칙 한 줄은:
+4. `AGENTS.md`의 `## 공통 규칙` 섹션에 포인터를 추가한다. 전체 블록은 `templates/AGENTS.snippet.md` 참고, 이 규칙 한 줄은:
    ```markdown
    - 코딩 컨벤션(lint·포맷·스택별 tsconfig 등): docs/conventions/coding-conventions.md
    ```
