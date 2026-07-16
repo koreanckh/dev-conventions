@@ -9,7 +9,7 @@
 |---|---|---|
 | TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + `docs/to-do/*.md`(SSOT) + GitHub Issues 미러 + Projects 보드 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
-| 에이전트 작업 규칙 | `conventions/agent-workflow.md` | 변경 전 계획-승인 · 풀스택 계약 확정 후 병렬 dispatch · 가벼운 실행(무거운 검증은 CI) |
+| 에이전트 작업 규칙 | `conventions/agent-workflow.md` | 변경 전 계획-승인 · 풀스택 계약 확정 후 병렬 dispatch · 워크트리는 병합 단위에 격리 · 가벼운 실행(무거운 검증은 CI) |
 
 ## 구조
 
