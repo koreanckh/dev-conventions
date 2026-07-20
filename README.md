@@ -9,7 +9,7 @@
 |---|---|---|
 | TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + `docs/to-do/*.md`(SSOT) + GitHub Issues 미러 + Projects 보드 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
-| 에이전트 작업 규칙 | `conventions/agent-workflow.md` | 변경 전 계획-승인 · 풀스택 계약 확정 후 병렬 dispatch · 워크트리는 병합 단위에 격리 · 가벼운 실행(무거운 검증은 CI) |
+| 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
 
 ## 구조
 
@@ -26,6 +26,7 @@ conventions/              규칙 원본 문서(원칙 + 셋업 + 적용법)
 inbox/                    다른 프로젝트 원자료 → /import-conventions로 정규화
 templates/
   AGENTS.snippet.md       대상 repo AGENTS.md에 병합하는 "## 공통 규칙" 블록
+  global/codex/           개인 전역 Codex 지침 → ~/.codex/AGENTS.md
   convention.template.md  새 규칙 문서 골격
   todo-file.template.md   to-do md 파일 원본
   nestjs/                 NestJS: tsconfig(.build).json · eslint.config.mjs · .prettierrc
@@ -34,6 +35,18 @@ templates/
 ```
 
 > `templates/<stack>/` config는 SuperMarkit 실 config 스냅샷(2026-07-13)이다. 각 폴더 README에 기준 버전과 주의사항이 있다.
+
+## 개인 전역 규칙 적용하기
+
+프로젝트와 무관하게 모든 Codex 작업에 적용할 개인 정책은 대상 repo의 `AGENTS.md`에 복사하지 않는다. `templates/global/codex/AGENTS.superpowers.snippet.md`를 원본으로 두고, 사용하는 PC마다 에이전트에게 다음처럼 요청해 `~/.codex/AGENTS.md`에 중복 없이 병합한다.
+
+```text
+dev-conventions/templates/global/codex/AGENTS.superpowers.snippet.md를 읽고
+~/.codex/AGENTS.md에 같은 섹션이 있으면 교체하고, 없으면 추가해줘.
+기존의 다른 전역 지침은 보존해줘.
+```
+
+새 PC에서는 이 repo를 clone 또는 pull한 뒤 위 요청을 한 번 실행하고, 전역 템플릿이 바뀌면 같은 요청으로 갱신한다. `/apply-conventions`는 현재 프로젝트의 규칙만 적용하며 개인 전역 파일은 수정하지 않는다.
 
 ## 새 프로젝트에 규칙 적용하기
 

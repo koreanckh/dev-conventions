@@ -11,11 +11,13 @@
 - 설정 값은 산문으로 풀어쓰지 말고 `templates/<stack>/`의 **실제 파일**로 둔다. 문서에는 "왜"만.
 - 규칙을 추가/수정하면 `README.md`의 "규칙 목록" 표와 포인터도 함께 갱신한다.
 - 남겨둔 주석은 함부로 삭제하지 않는다.
+- 작업 방식의 기본값은 **lightweight mode**다. 범위와 완료 조건이 명확하고 국소적이며 쉽게 되돌릴 수 있는 변경은 별도 spec/plan 없이 직접 처리하고, 변경 위험에 비례해 검증한다. 무거운 계획·서브에이전트 흐름은 명시적 요청이나 고위험 작업에만 승인 후 사용한다.
 
 ## 구조
 
 - `conventions/*.md` — 규칙 원본. 각 문서 맨 아래 "이 규칙 적용하기" 절차 포함.
 - `templates/` — 대상 repo로 복사하는 실파일(config 스캐폴딩, AGENTS 스니펫, 문서 템플릿).
+- `templates/global/codex/` — 대상 repo에 복사하지 않는 개인 전역 Codex 지침 템플릿. 에이전트가 `~/.codex/AGENTS.md`에 병합한다.
 - `inbox/` — 다른 프로젝트 원자료를 모아두는 곳. `/import-conventions`로 분석·정규화(→ `.claude/commands/import-conventions.md`). 처리분은 `inbox/processed/`로 이동.
 - `bootstrap.sh` + `install/apply-conventions.md` — PC마다 1회 `./bootstrap.sh`로 전역 `/apply-conventions` 설치(레포 경로 자기감지). 대상 프로젝트에 규칙을 복사·병합할 때 씀.
 - `README.md` — 규칙 목록 + 적용/추가 방법.
@@ -28,7 +30,7 @@
 2. 문체/깊이 레퍼런스: 기존 `conventions/todo-workflow.md`, `conventions/coding-conventions.md`.
 3. 값/설정이 있으면 산문 말고 `templates/<이름>/`에 **실파일** + 그 폴더 `README.md`(출처·기준 날짜/버전). 실 프로젝트에서 가져왔으면 byte-identical 스냅샷으로.
 4. `README.md`의 "규칙 목록" 표에 한 줄 추가.
-5. `templates/AGENTS.snippet.md`에 포인터 추가 — **매 작업에 적용되면** always-on 블록에 인라인, **특정 상황에만이면** on-demand에 "언제 읽어라" 힌트와 함께.
+5. 프로젝트 공통 규칙이면 `templates/AGENTS.snippet.md`에 포인터를 추가한다 — **매 작업에 적용되면** always-on 블록에 인라인, **특정 상황에만이면** on-demand에 "언제 읽어라" 힌트와 함께. 개인 전역 정책이면 프로젝트 스니펫에 넣지 말고 `templates/global/<provider>/`에 둔다.
 
 ## Provider entrypoints
 
