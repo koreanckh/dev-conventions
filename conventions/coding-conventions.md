@@ -49,8 +49,9 @@
 - ESLint(flat): `eslint.recommended` + `tseslint.recommendedTypeChecked`(`projectService: true`) + `prettier/recommended`. `no-explicit-any`·`no-unsafe-enum-comparison`·`require-await` off, `no-floating-promises`·`no-unsafe-*` warn, `no-unused-vars` error(`^_` 무시), `prettier/prettier` error.
 - Prettier: 4-space, `singleQuote`, `trailingComma: all`, `printWidth: 200`.
 - 폴더 구조: 기능별 모듈 `src/<feature>/`에 `.controller.ts`/`.service.ts`/`.module.ts` + `dto/`. 테스트 `.service.spec.ts`/`.unit.spec.ts`.
+- 크로스커팅·인프라는 서비스(기능) 모듈과 분리해 `src/common/`에 묶는다: `config/`·`db/`·`storage/`·`interceptors/`·`filters/`·`guards/`·`decorators/`·`errors/`. `AppModule`의 import도 `[공통/인프라]`와 `[서비스]`로 그룹을 구분한다.
 - 모듈 간 결합은 직접 import보다 이벤트버스 선호(`@EventHandler(EventName)`).
-- 응답 envelope 통일(`TransformInterceptor`), 전역 `ValidationPipe(whitelist)`, 전역 `HttpExceptionFilter`, 에러 코드 enum 일원화, 인증 가드 전역 + `@Public()` 예외.
+- 응답 envelope 통일(`TransformInterceptor`), 전역 `ValidationPipe(whitelist)`, 전역 `HttpExceptionFilter`, 에러 코드 enum 일원화, 인증 가드 전역 + `@Public()` 예외. 이 전역들은 `main.ts`에서 수동 등록하지 말고 **`@Global CommonModule`에서 `APP_PIPE`/`APP_INTERCEPTOR`/`APP_FILTER`/`APP_GUARD` provider로 등록**한다. CommonModule은 인프라 모듈(DB·Storage)을 import/export하는 단일 진입점 역할을 한다.
 - 명령어: `pnpm build`(nest build), `pnpm lint`(`eslint --fix`), `pnpm format`, `pnpm test`(jest). DB(Drizzle): `schema.ts 수정 → db:generate → db:migrate`.
 
 ### React / Vite (프론트 앱) → `templates/vite-react/`
