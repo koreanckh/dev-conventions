@@ -10,6 +10,7 @@
 | TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
 | 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
+| 트랜잭션 관리 | `conventions/transaction-management.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
 
 ## 구조
 

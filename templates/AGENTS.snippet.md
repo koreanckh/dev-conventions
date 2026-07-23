@@ -20,3 +20,4 @@
 - TODO 관리 대상(적용 시 실제 값으로 치환): GitHub Issues `<owner/repo>` · Project `<project-owner>/<project-number>` (`<Project title>`)
 - TODO/백로그를 만들거나 상태를 바꿀 때, 또는 무거운 항목을 spec/plan으로 올릴지 판단할 때: `docs/conventions/todo-workflow.md`를 먼저 읽고 **md → GitHub Issue → Project Status를 같은 턴에 함께 갱신한다**. Issue 라벨만 바꾸고 Project가 따라왔다고 가정하지 않는다.
 - 풀스택 병렬 진행·작업 격리(워크트리)·가벼운 실행 등 작업 방식: docs/conventions/agent-workflow.md
+- DB/트랜잭션 리소스를 쓰는 코드를 작성·수정할 때(경계·롤백·부수효과·동시성): docs/conventions/transaction-management.md
