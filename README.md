@@ -7,7 +7,7 @@
 
 | 규칙 | 문서 | 요약 |
 |---|---|---|
-| TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + `docs/to-do/*.md`(SSOT) + GitHub Issues 미러 + Projects 보드 · 무거운 항목은 spec/plan 연계 |
+| TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
 | 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
 
@@ -65,7 +65,7 @@ dev-conventions/templates/global/codex/AGENTS.superpowers.snippet.md를 읽고
 /apply-conventions <경로>      # 다른 clone을 쓰려면 경로 지정 (또는 DEV_CONVENTIONS_DIR)
 ```
 
-문서 복사(+출처 줄 자동 채움)·스택 감지 후 config 복사·`AGENTS.md` 공통 지침 병합·provider 진입점 구성·라벨 셋업까지 해준다. 덮어쓰기·`gh` 실행 전엔 확인한다.
+문서 복사(+출처 줄 자동 채움)·스택 감지 후 config 복사·`AGENTS.md` 공통 지침 병합·provider 진입점 구성·라벨 셋업·Project Auto-add/Status 검증까지 해준다. 덮어쓰기·`gh` 실행 전엔 확인한다.
 
 ### 방법 B — 수동
 
@@ -73,7 +73,7 @@ dev-conventions/templates/global/codex/AGENTS.superpowers.snippet.md를 읽고
 
 1. `conventions/<규칙>.md`를 대상 repo `docs/conventions/`로 복사하고, 문서 상단 출처 줄을 **복사일**로 채운다(복사본이 낡았는지 판단용).
 2. 쓰는 스택이면 `templates/<stack>/`의 config 파일을 대상 repo에 복사(설치 버전에 맞춰 조정 후 `pnpm lint`/`pnpm build` 확인).
-3. 규칙 문서의 셋업 명령(라벨 생성 등)을 1회 실행.
+3. 규칙 문서의 셋업 명령(라벨 생성, Project Auto-add/Status workflow, 기존 Issue 소급 추가 등)을 1회 실행.
 4. 대상 repo `AGENTS.md`의 `## 공통 규칙` 섹션을 `templates/AGENTS.snippet.md`로 채우고, `CLAUDE.md`, `GEMINI.md`, `.agents/rules/repository.md`는 `AGENTS.md`를 참조하는 얇은 진입점으로 둔다.
 
 > **왜 이 방식인가 (에이전트 참조 관점):** `AGENTS.md`에 공통 지침을 한 번만 두고, 각 agent가 자동으로 읽는 provider 진입점에서 이를 참조하면 agent를 바꿔도 같은 규칙이 적용된다.
