@@ -35,7 +35,7 @@ templates/
   next/                   Next.js: tsconfig.json · eslint.config.mjs (Next 16 flat)
 ```
 
-> `templates/<stack>/` config는 SuperMarkit 실 config 스냅샷(2026-07-13)이다. 각 폴더 README에 기준 버전과 주의사항이 있다.
+> `templates/<stack>/` config의 출처와 기준 날짜는 각 폴더 README에 기록한다. NestJS는 공식 starter 기반이며, 다른 스택은 실 프로젝트 config 스냅샷을 기반으로 한다.
 
 ## 개인 전역 규칙 적용하기
 

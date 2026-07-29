@@ -4,7 +4,7 @@
 
 프로젝트에서 코드를 어떻게 쓰는가에 대한 규칙. (도메인/제품 로직 규칙은 여기 넣지 않는다.)
 아래 **공통 규칙**은 새 프로젝트에도 그대로 가져가고, **스택별 기본값**은 `templates/<stack>/`의 실제 config 파일을 복사해 시작한다.
-스택별 값의 근거는 SuperMarkit(api=NestJS, app=Vite/React, web=Next.js) 기준.
+스택별 값은 각 템플릿 README에 출처와 기준 버전을 기록한다. NestJS는 공식 starter를 기준으로 팀 타입 안전성·포맷 규칙을 더하고, Vite/React·Next.js는 실 프로젝트 config를 기준으로 한다.
 
 ## 공통 규칙 (모든 프로젝트에 적용)
 
@@ -38,16 +38,21 @@
 ### 자동 생성물
 - 자동 생성 파일(예: 라우트 트리, 스키마 gen 산출물)은 **직접 수정하지 않는다.**
 
+### 들여쓰기 (indent)
+- **백엔드는 언어/프레임워크 무관하게 indent 4-space로 통일한다** (Nest/TS든 다른 언어든 백엔드 레이어는 4-space 고정). 포맷터가 있으면 그 값으로 강제한다(예: Prettier `tabWidth: 4`).
+- 프론트엔드는 2-space (관례). 왜: 백엔드는 스택이 바뀌어도 코드베이스 전반의 들여쓰기를 한 값으로 유지해 diff·리뷰 노이즈를 없앤다.
+
 ## 스택별 기본값 (해당 스택 쓸 때 `templates/<stack>/` 복사)
 
 실제 config는 산문이 아니라 **파일**로 둔다. 아래는 "무엇을/왜"만 요약하고, 값은 링크한 템플릿 파일이 정본이다.
-> 템플릿은 SuperMarkit 실 config 스냅샷(2026-07-13)이다. 복사 후 설치된 버전에 맞춰 조정하고 `pnpm lint`/`pnpm build`로 한 번 확인한다.
+> 출처·기준 날짜·버전은 각 `templates/<stack>/README.md`에 기록한다. 복사 후 설치된 버전에 맞춰 조정하고 `pnpm lint`/`pnpm build`로 한 번 확인한다.
 
 ### TypeScript / NestJS (백엔드) → `templates/nestjs/`
-- Node 22.x / TS ~5.7 / `module: commonjs`(`moduleResolution: node`) / `target: ES2023` / 데코레이터 메타데이터 on. 경로 alias `src/*`. NestJS 11.
+- Nest 공식 `typescript-starter` 기준 Node 22.x / TS 5.7.x / `module: nodenext`(`moduleResolution: nodenext`) / `target: ES2023` / `isolatedModules` / 데코레이터 메타데이터 on. 범용 경로 alias는 미지정. NestJS 11.
 - tsconfig strict 포인트: `strictNullChecks`·`noImplicitAny`·`forceConsistentCasingInFileNames` on. (`strictBindCallApply`·`noFallthroughCasesInSwitch`는 off.)
 - ESLint(flat): `eslint.recommended` + `tseslint.recommendedTypeChecked`(`projectService: true`) + `prettier/recommended`. `no-explicit-any`·`no-unsafe-enum-comparison`·`require-await` off, `no-floating-promises`·`no-unsafe-*` warn, `no-unused-vars` error(`^_` 무시), `prettier/prettier` error.
-- Prettier: 4-space, `singleQuote`, `trailingComma: all`, `printWidth: 200`.
+- Prettier: 4-space(백엔드 공통 규칙 — 위 "들여쓰기" 참조), `singleQuote`, `trailingComma: all`, `printWidth: 200`.
+- 모듈 분기: 기본은 공식 스타터처럼 `nodenext`. 순수 ESM 프로젝트만 `package.json`의 `"type": "module"`과 import/라이브러리 호환성을 함께 검토한다. 전체 `strict: true`와 경로 alias도 프로젝트 단위로 결정한다.
 - 폴더 구조: 기능별 모듈 `src/<feature>/`에 `.controller.ts`/`.service.ts`/`.module.ts` + `dto/`. 테스트 `.service.spec.ts`/`.unit.spec.ts`.
 - 크로스커팅·인프라는 서비스(기능) 모듈과 분리해 `src/common/`에 묶는다: `config/`·`db/`·`storage/`·`interceptors/`·`filters/`·`guards/`·`decorators/`·`errors/`. `AppModule`의 import도 `[공통/인프라]`와 `[서비스]`로 그룹을 구분한다.
 - 모듈 간 결합은 직접 import보다 이벤트버스 선호(`@EventHandler(EventName)`).
@@ -74,7 +79,7 @@
 
 ## 알려진 불일치 (정리하면 좋은 것)
 - Prettier 설정 파일은 백엔드(api)에만 있음. 프론트(app/web)는 ESLint에만 의존 → repo 간 포맷 규칙 미통일.
-- 들여쓰기: 백엔드 4-space(Prettier 강제) vs 프론트 2-space(관례). 새 프로젝트는 하나로 통일 권장.
+- 들여쓰기: 백엔드 4-space는 공통 규칙으로 확정(위 "들여쓰기" 참조, Prettier 강제). 프론트 2-space는 관례일 뿐 포맷터로 강제하지 않음 → 프론트 포맷 강제 여부는 미정.
 - commitlint 미설치라 커밋 컨벤션은 관례 의존.
 
 ## 이 규칙 적용하기

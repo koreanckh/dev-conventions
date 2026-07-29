@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "resolvePackageJsonExports": true,
         "esModuleInterop": true,
+        "isolatedModules": true,
         "declaration": true,
         "removeComments": true,
         "emitDecoratorMetadata": true,
@@ -13,16 +15,11 @@
         "outDir": "./dist",
         "baseUrl": "./",
         "incremental": true,
+        "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
         "strictBindCallApply": false,
-        "forceConsistentCasingInFileNames": true,
-        "noFallthroughCasesInSwitch": false,
-        "paths": {
-            "src/*": ["src/*"]
-        }
-    },
-    "include": ["src/**/*", "test/**/*"],
-    "exclude": ["node_modules", "dist"]
+        "noFallthroughCasesInSwitch": false
+    }
 }
