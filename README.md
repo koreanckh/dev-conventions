@@ -11,6 +11,7 @@
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
 | 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
 | 트랜잭션 관리 | `conventions/transaction-management.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
+| 배포 | `conventions/deployment.md` | 이미지 build와 운영 배포 분리 · 불변 태그 · 실행/교체 전략 선택 · secret/healthcheck/롤백·DB migration 경계 |
 
 ## 구조
 
