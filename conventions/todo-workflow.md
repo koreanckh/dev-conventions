@@ -18,11 +18,10 @@
 - Issue 라벨과 Project의 `Status` 필드는 별개다. Auto-add는 Issue를 Project에 넣을 뿐 `status:*` 라벨을 `Todo / In Progress / Done`으로 자동 변환하지 않는다.
 - 대상 repo의 `AGENTS.md`에 Issue repo와 Project owner/number/title을 실제 값으로 기록한다. 에이전트가 Project를 이름으로 추측하게 두지 않는다.
 - **완료 기준은 프로젝트마다 명시적으로 정한다.** 예: "`dev` 브랜치 머지 + `origin/dev` 푸시까지"를 완료로 보고 main 머지/운영 배포는 to-do 라이프사이클과 분리. 완료 처리 시 md 표기("머지 대기" 등)를 믿지 말고 **실제 git 상태로 검증**한다(예: `git log origin/dev..dev`가 비었는지).
-- **커밋은 사람이 요청할 때만.**
 
 ## to-do md 파일 템플릿
 
-`docs/to-do/<주제>.md` (복사용 원본: 이 repo `templates/todo-file.template.md`):
+`docs/to-do/<주제>.md` — 대상 repo에서는 아래 골격이 정본이다(이 문서가 함께 복사된다). dev-conventions 안에서 바로 복사해 쓸 실파일은 `templates/todo-file.template.md`이며, 대상 repo의 `docs/to-do/`에는 두지 않는다(최상위엔 남은 일만).
 
 ```markdown
 # TODO #000: <제목>
@@ -110,18 +109,18 @@ to-do는 **무엇을·왜·됐나**의 SSOT다. **어떻게 만들지**(설계·
 - **연결(양방향):** to-do의 `참고` 섹션에 spec/plan 경로를, spec 상단에 대응 to-do(`docs/to-do/001-<주제>.md`, `#001`) 링크를 남긴다.
 - **생성 순서 무관:** to-do를 먼저 잡고 나중에 brainstorm해도 되고, brainstorm하다 여러 조각으로 쪼개지면 각 조각을 새 to-do로 등록해도 된다.
 - **상태는 언제나 to-do에서만** 판단한다(spec/plan은 상태를 추적하지 않는다). 실행 중 세션 내 task 체크리스트는 휘발성이라 백로그 to-do와는 별개 층이다.
+- **진행 중 맥락은 to-do가 아니라 handoff에** 둔다. to-do는 *무엇을·왜·됐나*의 안정적 SSOT이므로 세션 단위의 휘발성 상태(어디까지 했나·뭘 시도했다 실패했나)를 섞지 않는다 → [작업 인계](handoff.md).
 - **개발 격리:** 워크트리는 to-do가 아니라 **병합 단위(plan)** 에 붙인다(에픽 to-do는 우산, 워크트리는 그 밑 plan 단위) → [에이전트 작업 규칙](agent-workflow.md)의 "작업 격리".
 
 ---
 
 ## 이 규칙 적용하기 (새 프로젝트당 1회)
 
-**1. 파일 복사** — 이 문서와 템플릿을 대상 repo로:
+**1. 파일 복사** — 이 문서를 대상 repo로 (템플릿 파일은 복사하지 않는다 — 위 "to-do md 파일 템플릿" 절이 함께 따라온다):
 
 ```sh
 mkdir -p docs/conventions docs/to-do/done
 cp <dev-conventions>/conventions/todo-workflow.md docs/conventions/
-cp <dev-conventions>/templates/todo-file.template.md docs/to-do/  # 원하면
 ```
 
 **2. 라벨 세트 생성** — `<owner/repo>`만 바꿔 붙여넣기:

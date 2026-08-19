@@ -10,6 +10,7 @@
 | TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
 | 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
+| 작업 인계 | `conventions/handoff.md` | 세션·에이전트·PC 경계를 넘길 때 `docs/handoff/<브랜치>.md` 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · WIP 커밋과 함께 push · 병합 시 삭제 |
 | 트랜잭션 관리 | `conventions/transaction-management.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
 | 배포 | `conventions/deployment.md` | 이미지 build와 운영 배포 분리 · 불변 태그 · 실행/교체 전략 선택 · secret/healthcheck/롤백·DB migration 경계 |
 
@@ -30,12 +31,15 @@ templates/
   AGENTS.snippet.md       대상 repo AGENTS.md에 병합하는 "## 공통 규칙" 블록
   global/codex/           개인 전역 Codex 지침 → ~/.codex/AGENTS.md
   convention.template.md  새 규칙 문서 골격
-  todo-file.template.md   to-do md 파일 원본
+  todo-file.template.md   to-do md 파일 골격
+  handoff.template.md     작업 인계 문서 골격
   nestjs/                 NestJS: tsconfig(.build).json · eslint.config.mjs · .prettierrc
   vite-react/             Vite/React: tsconfig 3종 · eslint.config.js · components.json
   next/                   Next.js: tsconfig.json · eslint.config.mjs (Next 16 flat)
 ```
 
+> `*.template.md`(문서 골격)은 **이 repo 안에서만** 쓴다 — 규칙 문서가 자기 템플릿을 품고 있으므로 대상 repo로 복사하지 않는다.
+>
 > `templates/<stack>/` config의 출처와 기준 날짜는 각 폴더 README에 기록한다. NestJS는 공식 starter 기반이며, 다른 스택은 실 프로젝트 config 스냅샷을 기반으로 한다.
 
 ## 개인 전역 규칙 적용하기

@@ -14,7 +14,8 @@
 
 ### 커밋 메시지 — Conventional Commits
 - 형식: `type(scope): 설명`.
-- type: `feat`, `fix`, `chore`, `refactor`, `style`, `docs`.
+- type: `feat`, `fix`, `chore`, `refactor`, `style`, `docs`, `wip`.
+- `wip`은 **handoff를 동반한 세션 중단 커밋 전용**이다 → [작업 인계](handoff.md). 브랜치를 병합할 땐 squash하거나 정식 type으로 다시 쓴다.
 - scope는 모듈/기능명 (`feat(notification):`, `fix(auth):`, `refactor(db):`).
 - 설명은 한국어 허용. 이슈 참조는 `(#12)` 형태로 뒤에 붙임.
 - commitlint로 강제하지 않고 **관례로 유지**한다 (툴 미설치가 기본).
@@ -80,7 +81,7 @@
 ## 알려진 불일치 (정리하면 좋은 것)
 - Prettier 설정 파일은 백엔드(api)에만 있음. 프론트(app/web)는 ESLint에만 의존 → repo 간 포맷 규칙 미통일.
 - 들여쓰기: 백엔드 4-space는 공통 규칙으로 확정(위 "들여쓰기" 참조, Prettier 강제). 프론트 2-space는 관례일 뿐 포맷터로 강제하지 않음 → 프론트 포맷 강제 여부는 미정.
-- commitlint 미설치라 커밋 컨벤션은 관례 의존.
+- commitlint 미설치라 커밋 컨벤션은 관례 의존. 도입한다면 허용 type에 `wip`을 반드시 포함한다 — 빠뜨리면 세션 중단 커밋이 훅에 막히는데 `--no-verify`도 금지라 빠져나갈 길이 없다.
 
 ## 이 규칙 적용하기
 1. 이 문서를 대상 repo `docs/conventions/coding-conventions.md`로 복사하고, 상단 출처 줄을 복사일로 채운다.

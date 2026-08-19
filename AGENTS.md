@@ -6,17 +6,18 @@
 
 ## 공통 규칙
 
-- 커밋: Conventional Commits(`type(scope): 설명`, scope는 `todo`/`coding`/`readme`/`templates` 등). **커밋은 사람이 요청할 때만.**
+- 커밋: Conventional Commits(`type(scope): 설명`, scope는 `todo`/`coding`/`readme`/`templates` 등).
 - 규칙 문서는 **자기완결형**으로 유지한다(원칙 + 셋업 + 적용법 한 문서에).
 - 설정 값은 산문으로 풀어쓰지 말고 `templates/<stack>/`의 **실제 파일**로 둔다. 문서에는 "왜"만.
 - 규칙을 추가/수정하면 `README.md`의 "규칙 목록" 표와 포인터도 함께 갱신한다.
 - 남겨둔 주석은 함부로 삭제하지 않는다.
+- 브랜치를 파서 여러 세션에 걸치는 작업이면 `docs/handoff/<브랜치명>.md`를 남기고 작업물과 **같은 커밋**으로 push한다(→ `conventions/handoff.md`). main에서 한 세션에 끝나는 문서 작업엔 만들지 않는다.
 - 작업 방식의 기본값은 **lightweight mode**다. 범위와 완료 조건이 명확하고 국소적이며 쉽게 되돌릴 수 있는 변경은 별도 spec/plan 없이 직접 처리하고, 변경 위험에 비례해 검증한다. 무거운 계획·서브에이전트 흐름은 명시적 요청이나 고위험 작업에만 승인 후 사용한다.
 
 ## 구조
 
 - `conventions/*.md` — 규칙 원본. 각 문서 맨 아래 "이 규칙 적용하기" 절차 포함.
-- `templates/` — 대상 repo로 복사하는 실파일(config 스캐폴딩, AGENTS 스니펫, 문서 템플릿).
+- `templates/` — config 스캐폴딩과 `AGENTS.snippet.md`는 대상 repo로 복사한다. `*.template.md`(문서 골격)은 **이 repo 안에서만** 쓴다 — 규칙 문서가 자기 템플릿을 품고 있으므로 대상 repo엔 복사하지 않는다.
 - `templates/global/codex/` — 대상 repo에 복사하지 않는 개인 전역 Codex 지침 템플릿. 에이전트가 `~/.codex/AGENTS.md`에 병합한다.
 - `inbox/` — 다른 프로젝트 원자료를 모아두는 곳. `/import-conventions`로 분석·정규화(→ `.claude/commands/import-conventions.md`). 처리분은 `inbox/processed/`로 이동.
 - `bootstrap.sh` + `install/apply-conventions.md` — PC마다 1회 `./bootstrap.sh`로 전역 `/apply-conventions` 설치(레포 경로 자기감지). 대상 프로젝트에 규칙을 복사·병합할 때 씀.
