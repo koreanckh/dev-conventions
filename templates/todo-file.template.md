@@ -1,6 +1,6 @@
 # TODO #000: <제목>
 
-- **번호:** #000
+- **번호:** #000 (= GitHub 이슈 번호, 3자리 zero-pad)
 - **상태:** 대기 | 진행 | 완료 (YYYY-MM-DD)
 - **이슈:** [<owner/repo>#N](https://github.com/<owner/repo>/issues/N) (미러 / 이 파일이 SSOT)
 - **등록일:** YYYY-MM-DD

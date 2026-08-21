@@ -7,7 +7,7 @@
 
 | 규칙 | 문서 | 요약 |
 |---|---|---|
-| TODO 관리 | `conventions/todo-workflow.md` | `#000` 3자리 고정 번호 + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
+| TODO 관리 | `conventions/todo-workflow.md` | 번호 = **GitHub 이슈 번호**(3자리 zero-pad, 이슈 먼저 발행해 받는다) + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `conventions/coding-conventions.md` | pnpm·Conventional Commits·husky/lint-staged·검증 게이트 + 스택별 실 config는 `templates/<stack>/` |
 | 에이전트 작업 규칙 | `conventions/agent-workflow.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
 | 작업 인계 | `conventions/handoff.md` | 세션·에이전트·PC 경계를 넘길 때 `docs/handoff/<브랜치>.md` 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · WIP 커밋과 함께 push · 병합 시 삭제 |
