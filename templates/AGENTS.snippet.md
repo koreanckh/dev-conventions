@@ -26,3 +26,4 @@
 - handoff 문서를 쓰거나(무엇을 담고 무엇을 빼나) 병합 시 정리할 때: docs/conventions/handoff.md
 - DB/트랜잭션 리소스를 쓰는 코드를 작성·수정할 때(경계·롤백·부수효과·동시성): docs/conventions/transaction-management.md
 - Docker/GitHub Actions/운영 배포·롤백을 만들거나 바꿀 때: docs/conventions/deployment.md
+- .claude/·.codex/·hooks·권한·skills·서브에이전트를 만들거나 바꿀 때, 또는 AGENTS.md에 "매번/절대" 류 규칙을 추가하려 할 때: docs/conventions/harness-engineering.md

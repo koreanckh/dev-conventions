@@ -2,7 +2,7 @@
 
 > 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
 
-AI 에이전트가 이 repo/프로젝트에서 **어떻게 일하는가**에 대한 규칙. 무엇을 만드는가(도메인)나 코드를 어떻게 쓰는가(→ [코딩 컨벤션](coding-conventions.md))가 아니라, 변경을 진행하는 절차·협업 방식을 다룬다.
+AI 에이전트가 이 repo/프로젝트에서 **어떻게 일하는가**에 대한 규칙. 무엇을 만드는가(도메인)나 코드를 어떻게 쓰는가(→ [코딩 컨벤션](coding-conventions.md))가 아니라, 변경을 진행하는 절차·협업 방식을 다룬다. 에이전트를 감싸는 repo 설정(권한·hook·지침 배치)은 → [하네스 설정](harness-engineering.md).
 
 ## 원칙
 

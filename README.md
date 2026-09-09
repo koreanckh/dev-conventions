@@ -13,6 +13,7 @@
 | 작업 인계 | `conventions/handoff.md` | 세션·에이전트·PC 경계를 넘길 때 `docs/handoff/<브랜치>.md` 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · WIP 커밋과 함께 push · 병합 시 삭제 |
 | 트랜잭션 관리 | `conventions/transaction-management.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
 | 배포 | `conventions/deployment.md` | 이미지 build와 운영 배포 분리 · 불변 태그 · 실행/교체 전략 선택 · secret/healthcheck/롤백·DB migration 경계 |
+| 하네스 설정 | `conventions/harness-engineering.md` | 지침 < hook/권한 < 환경 계층 · "매번/절대"는 hook·deny로 · AGENTS.md는 목차 · 생성/평가 분리 · 권한 3패턴(기본 B) + 실 settings/hook은 `templates/harness/` |
 
 ## 구조
 
@@ -36,6 +37,7 @@ templates/
   nestjs/                 NestJS: tsconfig(.build).json · eslint.config.mjs · .prettierrc
   vite-react/             Vite/React: tsconfig 3종 · eslint.config.js · components.json
   next/                   Next.js: tsconfig.json · eslint.config.mjs (Next 16 flat)
+  harness/                Claude Code settings.json(권한 패턴 B)·hooks / Codex config.toml
 ```
 
 > `*.template.md`(문서 골격)은 **이 repo 안에서만** 쓴다 — 규칙 문서가 자기 템플릿을 품고 있으므로 대상 repo로 복사하지 않는다.

@@ -22,6 +22,7 @@ dev-conventions 레포의 규칙을 **현재 작업 중인 프로젝트**(cwd)�
    - `vite` + `react` → `<SRC>/templates/vite-react/`
    - `next` → `<SRC>/templates/next/`
    판별 결과를 사용자에게 확인한 뒤 해당 폴더의 config 파일만 프로젝트 루트로 복사한다(폴더 `README.md`는 제외). **기존 config가 있으면 덮지 말고** diff를 보여주고 물어본다. 안 쓰는 스택 config는 넣지 않는다.
+   - 스택과 무관하게 `<SRC>/templates/harness/claude/settings.json` → `.claude/settings.json`, `claude/hooks/*.sh` → `.claude/hooks/`(실행 권한 유지). 기존 `settings.json`이 있으면 `permissions`·`hooks` 키를 diff 보여주고 **병합**한다. `.claude/settings.local.json`을 `.gitignore`에 추가한다. `codex/config.toml` → `.codex/config.toml`은 Codex를 쓰는지 물어본 뒤에만. allow 목록의 pnpm 스크립트명은 대상 `package.json`의 `scripts`와 대조해 조정한다(→ `docs/conventions/harness-engineering.md`).
 3. **공통 지침 + provider 진입점 구성**
    - `<SRC>/templates/AGENTS.snippet.md`의 `## 공통 규칙` 블록을 대상 `AGENTS.md`에만 병합한다. 파일이 없으면 생성하고, 같은 섹션이 있으면 **중복 줄 없이** 병합한다.
    - TODO 관리 대상 줄의 `<owner/repo>`, `<project-owner>`, `<project-number>`, `<Project title>`은 git remote와 실제 GitHub Project 조회 결과로 치환한다. placeholder를 남기거나 Project를 추측하지 않는다.
