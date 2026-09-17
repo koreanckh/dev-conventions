@@ -8,8 +8,8 @@
 
 다 모았으면 이 repo에서 **`/import-conventions`** 실행. 그러면:
 1. inbox 전체를 읽어 주제(1주제=1규칙)로 분해하고,
-2. 기존 `conventions/*.md`와 대조해 **겹치면 갱신 / 새 주제면 신규 생성**,
-3. 이 repo 패턴(출처 줄·섹션 순서·`templates/` 실파일·README 표·CLAUDE 포인터)으로 정리,
+2. 기존 `global/skills/*/SKILL.md`와 대조해 **겹치면 갱신 / 새 주제면 신규 생성**,
+3. 이 repo 패턴(frontmatter·섹션 순서·실파일 분리·README 표)으로 정리,
 4. 처리한 원자료는 `inbox/processed/<날짜>/`로 옮기고,
 5. 무엇을 만들고 갱신했는지 요약해준다.
 

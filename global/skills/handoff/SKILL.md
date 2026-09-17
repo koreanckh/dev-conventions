@@ -1,16 +1,19 @@
+---
+name: handoff
+description: handoff 문서를 쓰거나(무엇을 담고 무엇을 빼나) 병합 시 정리할 때
+---
+
 # 작업 인계(handoff) 규칙
 
-> 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
-
-한 작업이 **세션·에이전트·PC 경계를 넘어갈 때** 다음 손이 맥락을 다시 파헤치지 않고 바로 이어받게 하는 규칙. 세션이 끝나거나, 집↔사무실로 자리를 옮기거나, 다른 에이전트/워크트리에 넘길 때 쓴다. `docs/handoff`, 기본 브랜치 이름 같은 값만 프로젝트에 맞게 바꿔 쓴다.
+한 작업이 **세션·에이전트·PC 경계를 넘어갈 때** 다음 손이 맥락을 다시 파헤치지 않고 바로 이어받게 하는 규칙. 세션이 끝나거나, 집↔사무실로 자리를 옮기거나, 다른 에이전트/워크트리에 넘길 때 쓴다. 프로젝트마다 달라지는 값(`handoff` 경로, 기본 브랜치 이름)은 맨 아래 "필요한 프로젝트 파라미터"에서 읽는다. 아래 `docs/handoff/`는 `handoff`의 기본값이다.
 
 ## 원칙
 
-- **인계 단위 = 병합 단위 = 브랜치 1개 = handoff 파일 1개.** 경로는 `docs/handoff/<브랜치명>.md`이고 브랜치명의 `/`는 `-`로 바꾼다(`todo/003-foo` → `docs/handoff/todo-003-foo.md`). 워크트리를 병합 단위에 붙이는 규칙과 같은 단위다 → [에이전트 작업 규칙](agent-workflow.md)의 "작업 격리".
+- **인계 단위 = 병합 단위 = 브랜치 1개 = handoff 파일 1개.** 경로는 `handoff` 디렉터리의 `<브랜치명>.md`이고 브랜치명의 `/`는 `-`로 바꾼다(`todo/003-foo` → `docs/handoff/todo-003-foo.md`). 워크트리를 병합 단위에 붙이는 규칙과 같은 단위다 → [에이전트 작업 규칙](../agent-workflow/SKILL.md)의 "작업 격리".
 - **덮어쓰기지 append가 아니다.** 파일엔 언제나 "지금 상태"만 남는다. 이력이 궁금하면 `git log -p docs/handoff/<파일>.md`. 갱신할 때마다 죽은 가지와 낡은 정보를 지운다.
 - **한 화면을 넘기지 않는다(≈50줄).** 넘으면 압축한다. 길어진 handoff는 대화록 복사본으로 드리프트하며, 이게 이 패턴의 가장 흔한 실패 모드다.
 - **다른 문서에 이미 있는 내용은 쓰지 않고 경로로 참조한다.** to-do·spec/plan·이슈·커밋 메시지에 있는 건 복사하지 않는다. handoff가 담을 것은 **대화에만 존재하는 것** — 왜 이 방향인지, 이미 해봤다 실패한 접근, 미해결 질문, 다음 한 수. 파일 내용을 붙여넣지 말고 `경로:라인`으로 가리킨다.
-- **상태의 SSOT는 여전히 to-do다.** "됐나 안 됐나"는 `docs/to-do/`에서 판단한다 → [TODO 관리](todo-workflow.md). handoff는 "어디까지 왔고 다음 손이 뭘 하나"만 담는 휘발성 층이다.
+- **상태의 SSOT는 여전히 to-do다.** "됐나 안 됐나"는 `todo` 디렉터리에서 판단한다 → [TODO 관리](../todo-workflow/SKILL.md). handoff는 "어디까지 왔고 다음 손이 뭘 하나"만 담는 휘발성 층이다.
 - **handoff는 코드와 같은 커밋으로 push된다.** handoff만 커밋하고 작업물을 안 올리면 인계는 실패한 것이다.
 - **병합되면 지운다.** 브랜치를 병합하는 그 PR/머지에서 handoff 파일도 삭제한다. 살아남은 handoff는 유령 문서다.
 - **세션을 시작하면 현재 브랜치의 handoff부터 읽는다.** 있으면 읽고 시작하고, 없으면 새 작업이다.
@@ -47,7 +50,7 @@ handoff는 **작업의 기준 문서가 아니다.** 무엇을 할지·어디까
 
 ## handoff 파일 템플릿
 
-**대상 repo에서는 이 절의 템플릿이 정본이다** — 이 문서가 함께 복사되므로 dev-conventions 없이도 참조할 수 있다. dev-conventions 안에서 바로 복사해 쓸 실파일은 `templates/handoff.template.md`(같은 내용, 한쪽을 고치면 다른 쪽도 맞춘다). 이 파일을 대상 repo의 `docs/handoff/`에 복사하지 않는다.
+**이 절의 골격이 정본이다.** 전역 설치가 없는 환경에서도 프로젝트 AGENTS.md의 `handoff` 줄만 보고 파일을 쓸 수 있어야 하므로, 여기 골격을 그대로 쓴다. 복사해 쓸 실파일은 dev-conventions `project/handoff.template.md`(같은 내용 — 한쪽을 고치면 다른 쪽도 맞춘다)이고, 템플릿 파일 자체는 `handoff` 디렉터리에 두지 않는다.
 
 ```markdown
 # Handoff: <브랜치명>
@@ -55,7 +58,7 @@ handoff는 **작업의 기준 문서가 아니다.** 무엇을 할지·어디까
 - **갱신:** YYYY-MM-DD HH:MM · <home|office>
 - **브랜치:** <branch> (base: main|dev) · 마지막 커밋 `<sha>`
 - **워크트리:** <경로|없음> — 복원: `git worktree add <경로> <branch>`
-- **TODO:** docs/to-do/NNN-<주제>.md (#NNN)
+- **TODO:** <todo>/NNN-<주제>.md (#NNN)
 - **먼저 읽을 것:** <spec/plan 경로 · 핵심 파일 path:line 2~3개>
 
 ## 다음 한 수
@@ -118,24 +121,20 @@ handoff는 **작업의 기준 문서가 아니다.** 무엇을 할지·어디까
 **병합할 때**
 
 1. 브랜치를 병합하는 PR/머지에서 `docs/handoff/<브랜치명>.md`를 삭제한다.
-2. to-do 상태를 완료로 갱신한다(md → Issue → Project) → [TODO 관리](todo-workflow.md).
+2. to-do 상태를 완료로 갱신한다(md → Issue → Project) → [TODO 관리](../todo-workflow/SKILL.md).
 3. 남은 이야기가 있으면 handoff에 남기지 말고 **새 to-do로 등록**한다. handoff는 브랜치와 함께 사라지는 문서다.
 
 ## 주의
 
 - **`wip:` 커밋도 pre-commit 훅을 우회하지 않는다.** `--no-verify` 금지는 그대로다. lint-staged는 대개 반쯤 짠 코드도 통과하고, 통과 못 할 정도면 실제로 깨진 상태이므로 정리하고 커밋한다. 정말 막혔으면 그 사실 자체를 handoff의 `이미 해봤고 안 된 것`에 적는다.
 - **handoff는 상태 SSOT가 아니다.** 완료 판정은 to-do에서만 한다. handoff에 "완료"라고 적혀 있어도 판단 근거로 쓰지 않는다.
-- **병합 후 남은 파일은 유령이다.** `docs/handoff/`엔 **브랜치와 1:1로 짝지어지는 파일만** 둔다(템플릿·README 금지 — 짝 없는 파일이 섞이면 이 점검이 무의미해진다). 가끔 `ls docs/handoff/`와 `git branch -a`를 대조해 죽은 브랜치의 handoff가 남아있지 않은지 확인한다.
+- **병합 후 남은 파일은 유령이다.** `handoff` 디렉터리엔 **브랜치와 1:1로 짝지어지는 파일만** 둔다(템플릿·README 금지 — 짝 없는 파일이 섞이면 이 점검이 무의미해진다). 가끔 `ls <handoff>/`와 `git branch -a`를 대조해 죽은 브랜치의 handoff가 남아있지 않은지 확인한다.
 - **타임스탬프별로 파일을 쌓지 않는다.** 다음 손이 "어느 게 최신이냐"를 판독해야 하는 순간 handoff는 목적을 잃는다.
 
-## 이 규칙 적용하기
+## 필요한 프로젝트 파라미터
 
-1. 이 문서를 대상 repo `docs/conventions/handoff.md`로 복사하고 상단 출처 줄을 복사일로 채운다.
-2. 별도 셋업은 없다. `docs/handoff/`는 첫 handoff를 쓸 때 생긴다(빈 디렉터리는 git이 추적하지 않으므로 미리 만들 이유가 없다). 골격은 위 "handoff 파일 템플릿" 절에서 복사한다 — **템플릿 파일을 `docs/handoff/`에 두지 않는다.**
-3. `AGENTS.md`의 `## 공통 규칙`에 아래를 추가한다(전체 블록은 `templates/AGENTS.snippet.md`). 매 세션 시작·종료와 작업 중간에 걸리는 규칙이므로 **always-on 인라인** 3줄 + 포인터 1줄:
-   ```markdown
-   - 세션을 시작하면 `docs/handoff/<현재 브랜치명>.md`(브랜치의 `/`는 `-`)가 있는지 먼저 확인하고, 있으면 읽고 시작한다.
-   - 세션을 끝내거나 자리를 옮기기 전에 handoff를 갱신하고 `wip:` 커밋에 **함께 실어** push한다. handoff만 커밋하고 작업물을 안 올리면 인계가 아니다.
-   - 실패로 확정된 접근과 대화에서만 나온 결정은 세션 끝까지 미루지 말고 **그 순간** handoff에 한 줄로 적는다. 대화가 끊기면 복구할 수 없는 정보다.
-   - handoff 문서를 쓰거나 병합 시 정리할 때: docs/conventions/handoff.md
-   ```
+- `handoff` — handoff 문서 디렉터리(기본 `docs/handoff/`). 이 문서의 모든 `docs/handoff/<브랜치명>.md`는 이 파라미터 + `<브랜치명>.md`로 읽는다.
+- `todo` — 상태 SSOT 경로. "됐나 안 됐나"는 handoff가 아니라 여기서 판단한다.
+- `verify` — `검증 상태` 줄에 적고, 도착할 때 다시 돌릴 명령.
+- 빈 디렉터리는 git이 추적하지 않는다. `handoff` 디렉터리는 첫 문서를 쓸 때 생기므로 미리 만들 이유가 없다.
+- 골격 파일은 dev-conventions `project/handoff.template.md`다(위 "handoff 파일 템플릿" 절과 같은 내용 — 한쪽을 고치면 다른 쪽도 맞춘다).

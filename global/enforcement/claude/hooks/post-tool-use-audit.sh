@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PostToolUse audit — 모든 툴 호출 payload를 날짜별 JSONL로 append한다(관측/사후 디버깅용). 항상 exit 0.
-# 배선은 templates/harness/README.md의 hooks 조각 참고. 기본 경로 ~/.claude/audit, CLAUDE_AUDIT_DIR로 변경.
-# 출처: dev-conventions/templates/harness (→ docs/conventions/harness-engineering.md)
+# 배선은 global/enforcement/README.md의 hooks 조각 참고. 기본 경로 ~/.claude/audit, CLAUDE_AUDIT_DIR로 변경.
+# 원본: dev-conventions/global/enforcement/claude/hooks (→ global/skills/harness-engineering/SKILL.md)
 set -euo pipefail
 
 log_dir="${CLAUDE_AUDIT_DIR:-$HOME/.claude/audit}"

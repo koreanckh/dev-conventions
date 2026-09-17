@@ -1,19 +1,22 @@
+---
+name: deployment
+description: Docker/GitHub Actions/운영 배포·롤백을 만들거나 바꿀 때
+---
+
 # 배포 컨벤션
 
-> 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
-
 Docker 이미지와 GitHub Actions를 사용하는 서비스의 **빌드·릴리스·운영 배포·롤백·검증 경계**를 정한다.
-구체적인 서버 주소, 포트, 도메인, secret 값은 프로젝트마다 다르므로 각 repo의 `DEPLOY.md`와 실행 가능한 workflow/script에 기록한다.
+구체적인 서버 주소, 포트, 도메인, secret 값은 프로젝트마다 다르므로 `ops` 파라미터가 가리키는 운영 문서와 실행 가능한 workflow/script에 기록한다. 아래에서 `ops`는 그 문서를 뜻하고, 기본값은 repo 루트의 `DEPLOY.md`다.
 
 ## 원칙
 
 - **빌드와 운영 배포를 분리한다.** 애플리케이션 repo의 CI는 이미지를 빌드해 registry에 push하고, 운영 배포는 별도 job 또는 infra repo가 명시적으로 실행한다.
 - **배포 가능한 산출물은 불변이어야 한다.** 같은 커밋을 다시 빌드하지 않고 `sha-<short-sha>` 또는 image digest로 배포·롤백한다. `latest`는 편의용 포인터이지 배포 이력의 근거가 아니다.
-- **운영 배포는 명시적 승인을 기본으로 한다.** 기본 흐름은 `main` push로 이미지 생성 → 검증된 태그를 production `workflow_dispatch`로 배포한다. 완전 자동 배포가 필요하면 실패 영향·롤백·승인 정책을 `DEPLOY.md`에 별도로 명시한다.
+- **운영 배포는 명시적 승인을 기본으로 한다.** 기본 흐름은 `main` push로 이미지 생성 → 검증된 태그를 production `workflow_dispatch`로 배포한다. 완전 자동 배포가 필요하면 실패 영향·롤백·승인 정책을 `ops`에 별도로 명시한다.
 - **상태 경계를 섞지 않는다.** `구현`, `로컬 검증`, `커밋`, `push`, `이미지 생성`, `운영 배포`, `공개 검증`을 각각 확인한다. 앞 단계 성공을 다음 단계 성공으로 보고하지 않는다.
 - **운영 secret은 이미지에 넣지 않는다.** 공개되어도 되는 빌드 시점 값과 서버 전용 런타임 값을 분리하고, 런타임 secret은 GitHub production Environment 또는 동등한 secret store에서 주입한다.
 - **롤백은 배포 전에 준비한다.** 직전 정상 이미지 태그, 되돌리는 명령, healthcheck, DB 호환 범위를 배포 전에 알 수 있어야 한다.
-- **실행 파일과 문서를 함께 유지한다.** workflow·compose·배포 script가 바뀌면 `DEPLOY.md`도 같은 변경에서 갱신한다. 문서와 실행 파일이 다르면 현재 실행 파일을 근거로 차이를 보고하고 문서를 바로잡는다.
+- **실행 파일과 문서를 함께 유지한다.** workflow·compose·배포 script가 바뀌면 `ops`도 같은 변경에서 갱신한다. 문서와 실행 파일이 다르면 현재 실행 파일을 근거로 차이를 보고하고 문서를 바로잡는다.
 
 ## 표준 배포 흐름
 
@@ -30,7 +33,7 @@ main push/tag
   → 이전 인스턴스/미사용 이미지 정리
 ```
 
-권장 파일 배치는 다음과 같다. 프로젝트 구조가 다르면 역할은 유지하되 경로를 `DEPLOY.md`에 적는다.
+권장 파일 배치는 다음과 같다. 프로젝트 구조가 다르면 역할은 유지하되 경로를 `ops`에 적는다.
 
 ```text
 .github/workflows/
@@ -42,12 +45,12 @@ deploy/
   scripts/
     deploy.sh
     healthcheck.sh
-DEPLOY.md                  # 프로젝트별 운영 SSOT
+DEPLOY.md                  # 프로젝트별 운영 SSOT (= `ops` 기본값)
 ```
 
 ## 프로젝트별로 명시할 선택
 
-배포 컨벤션은 아래 선택 중 하나를 몰래 기본값으로 정하지 않는다. 프로젝트를 시작하거나 배포 구조를 바꿀 때 결정과 이유를 `DEPLOY.md`에 남긴다.
+배포 컨벤션은 아래 선택 중 하나를 몰래 기본값으로 정하지 않는다. 프로젝트를 시작하거나 배포 구조를 바꿀 때 결정과 이유를 `ops`(와 `decisions`)에 남긴다.
 
 ### 배포 실행 위치
 
@@ -90,13 +93,13 @@ blue/green은 새 인스턴스를 먼저 띄우고 healthcheck를 통과한 뒤 
 
 - 브라우저 번들, sitemap, canonical, OG, 공개 API URL처럼 이미지에 박히는 값은 build arg 또는 CI variable로 전달한다.
 - `NEXT_PUBLIC_*`, `VITE_*`는 이름에 secret처럼 보이는 단어가 있어도 최종 번들에서 공개될 수 있다. 민감 값을 넣지 않는다.
-- 빌드 시점 값이 바뀌면 이미지를 다시 빌드해야 반영된다는 사실을 `DEPLOY.md`에 적는다.
+- 빌드 시점 값이 바뀌면 이미지를 다시 빌드해야 반영된다는 사실을 `ops`에 적는다.
 
 ### 런타임 값
 
 - DB URL, API secret, service-role key, 암호화 키는 GitHub production Environment 또는 동등한 secret store에서 서버 env로 주입한다.
 - 배포마다 env 파일을 재생성하는 방식이면 권한을 `600`으로 제한하고 필수 값이 비었는지 확인한 후 컨테이너를 교체한다.
-- secret 값 자체는 workflow log, `DEPLOY.md`, compose, 예제 env에 남기지 않는다. 문서에는 필요한 이름과 발급 위치만 기록한다.
+- secret 값 자체는 workflow log, `ops`, compose, 예제 env에 남기지 않는다. 문서에는 필요한 이름과 발급 위치만 기록한다.
 - public/default env와 secret env의 갱신 정책을 구분한다. 기존 파일을 보존하는지, 매 배포 재생성하는지 불분명하게 두지 않는다.
 
 ## 배포 안전장치
@@ -115,7 +118,7 @@ blue/green은 새 인스턴스를 먼저 띄우고 healthcheck를 통과한 뒤 
 - 이미지 롤백은 코드만 되돌리며 데이터와 스키마를 자동으로 되돌리지 않는다.
 - 기본 원칙은 **DB forward-only, 코드는 롤백 가능**이다. 컬럼 추가·nullable·새 테이블 같은 하위호환 변경을 우선한다.
 - 컬럼 삭제·이름 변경·NOT NULL 강제·타입 변경은 확장 → 양쪽 호환 → 제거의 여러 배포로 나눈다.
-- migration 실행 시점, 승인 주체, 백업, 실패 복구, 이전 코드 호환 범위를 `DEPLOY.md` 또는 별도 runbook에 적는다.
+- migration 실행 시점, 승인 주체, 백업, 실패 복구, 이전 코드 호환 범위를 `ops` 또는 별도 runbook에 적는다.
 - 운영 migration은 일반 이미지 배포에 암묵적으로 섞지 않는다. 자동화한다면 별도 단계와 명확한 실패 정책을 둔다.
 
 ## 배포 검증과 보고
@@ -132,7 +135,7 @@ blue/green은 새 인스턴스를 먼저 띄우고 healthcheck를 통과한 뒤 
 
 확인하지 못한 경계는 `미확인` 또는 `차단`으로 적는다. 로컬 build 성공을 배포 성공이라고 하거나, workflow 성공만으로 공개 서비스까지 정상이라고 보고하지 않는다.
 
-## `DEPLOY.md`에 반드시 기록할 항목
+## `ops`에 반드시 기록할 항목
 
 - build workflow와 deploy workflow의 트리거
 - image registry/name/tag 규칙과 특정 버전 배포 방법
@@ -146,13 +149,9 @@ blue/green은 새 인스턴스를 먼저 띄우고 healthcheck를 통과한 뒤 
 - DB migration 정책과 자동화 여부
 - 알려진 운영 제약과 아직 자동화되지 않은 단계
 
-## 이 규칙 적용하기
+## 필요한 프로젝트 파라미터
 
-1. 이 문서를 대상 repo `docs/conventions/deployment.md`로 복사하고 상단 출처 줄을 복사일로 채운다.
-2. 현재 workflow·compose·배포 script·GitHub Environment 사용을 조사하고, 위 선택 항목을 프로젝트 `DEPLOY.md`에 실제 값으로 기록한다.
-3. 없는 배포 파일을 관성적으로 생성하지 않는다. 서비스 형태와 운영 토폴로지를 먼저 결정한 뒤 필요한 workflow/script만 추가한다.
-4. `AGENTS.md`의 `## 공통 규칙`에 포인터를 추가한다(전체 블록은 `templates/AGENTS.snippet.md`):
-   ```markdown
-   - Docker/GitHub Actions/운영 배포·롤백을 만들거나 바꿀 때: docs/conventions/deployment.md
-   ```
-5. 기존 배포가 이 규칙과 다르면 즉시 일괄 변경하지 않는다. 현재 차이와 위험을 기록하고, 가역적인 항목부터 별도 작업으로 정렬한다.
+- `ops` — 운영 SSOT 문서/디렉터리(기본 `DEPLOY.md`). 이 문서가 "적는다"고 하는 곳은 전부 여기다.
+- `verify` — 배포 전에 통과해야 하는 검증 진입점.
+- workflow·compose·배포 script는 파라미터가 아니라 그 프로젝트에 **실제로 존재하는 파일**이다. 없는 배포 파일을 관성적으로 만들지 않는다 — 서비스 형태와 운영 토폴로지를 먼저 정한 뒤 필요한 것만 추가한다.
+- 기존 배포가 이 규칙과 다르면 즉시 일괄 변경하지 않는다. 현재 차이와 위험을 `ops`에 기록하고, 가역적인 항목부터 별도 작업으로 정렬한다.

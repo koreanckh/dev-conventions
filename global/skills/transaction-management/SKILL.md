@@ -1,6 +1,9 @@
-# 트랜잭션 관리
+---
+name: transaction-management
+description: DB/트랜잭션 리소스를 쓰는 코드를 작성·수정할 때(경계·롤백·부수효과·동시성)
+---
 
-> 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
+# 트랜잭션 관리
 
 데이터 정합성을 지키기 위한 **트랜잭션 경계·롤백·부수효과·동시성** 규칙. 언어/프레임워크에 무관한 원칙만 담는다. 구체적 API(`@Transactional`, `BEGIN/COMMIT`, `tx.Rollback()` 등)는 스택마다 다르므로 맨 아래 "구현 매핑"으로만 연결한다.
 
@@ -37,11 +40,8 @@
 - **Go (database/sql)** — `tx, _ := db.BeginTx(...)` + `defer tx.Rollback()` 후 성공 시 `tx.Commit()`.
 - **Raw SQL** — `BEGIN` / `COMMIT` / `ROLLBACK`, 잠금은 `SELECT ... FOR UPDATE`.
 
-## 이 규칙 적용하기
+## 필요한 프로젝트 파라미터
 
-1. 이 문서를 대상 repo `docs/conventions/transaction-management.md`로 복사하고, 상단 출처 줄을 복사일로 채운다.
-2. 값/설정 파일은 없다(원칙 문서). 대상 repo의 실제 스택에 맞춰 "구현 매핑"의 해당 항목만 확인한다.
-3. `AGENTS.md`의 `## 공통 규칙`에 포인터 한 줄 추가(전체 블록은 `templates/AGENTS.snippet.md`):
-   ```markdown
-   - DB/트랜잭션 리소스를 쓰는 코드를 작성·수정할 때: docs/conventions/transaction-management.md
-   ```
+- `stack` — 위 "구현 매핑"에서 어느 줄을 쓸지 고른다.
+
+그 밖에 프로젝트마다 달라지는 값은 없다. 원칙만 담은 문서다.

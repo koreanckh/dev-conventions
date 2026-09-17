@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # PreToolUse(Bash) guard — 권한 prefix 규칙으로 못 잡는 "인자 위치가 자유로운" 위험 패턴을 차단한다.
 # 계약: stdin으로 hook payload(JSON)를 받고, 차단하려면 stderr에 사유를 쓰고 exit 2. exit 0은 판단 없음(정상 진행).
-# 출처: dev-conventions/templates/harness (→ docs/conventions/harness-engineering.md)
+# 원본: dev-conventions/global/enforcement/claude/hooks (→ global/skills/harness-engineering/SKILL.md)
 set -euo pipefail
 
 payload="$(cat)"

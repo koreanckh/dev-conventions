@@ -1,8 +1,11 @@
+---
+name: harness-engineering
+description: .claude/·.codex/·hooks·권한·skills·서브에이전트를 만들거나 바꿀 때, 또는 지침 파일에 "매번/절대" 류 규칙을 추가하려 할 때
+---
+
 # 하네스 설정
 
-> 원본(SSOT): dev-conventions. 대상 repo로 복사할 땐 이 줄을 `> 출처: dev-conventions · 복사 YYYY-MM-DD`로 바꿔 남긴다(복사본이 낡았는지 판단용).
-
-`Agent = Model + Harness`. 모델은 못 바꾸니까, 모델을 감싸는 것 — 지침 파일·권한·hook·skill·서브에이전트·검증 루프 — 을 어디에 어떻게 두는가가 결과를 결정한다. 이 문서는 그 **배치 규칙**이다. 에이전트가 *어떻게 일하는가*(절차)는 [에이전트 작업 규칙](agent-workflow.md), 상태를 세션 밖에 남기는 법은 [작업 인계](handoff.md)·[TODO 관리](todo-workflow.md)에 이미 있으므로 여기선 참조만 한다. 프로젝트마다 바꿀 값: allow-list의 스크립트명, 보호할 env 파일 경로 — 전부 `templates/harness/`.
+`Agent = Model + Harness`. 모델은 못 바꾸니까, 모델을 감싸는 것 — 지침 파일·권한·hook·skill·서브에이전트·검증 루프 — 을 어디에 어떻게 두는가가 결과를 결정한다. 이 문서는 그 **배치 규칙**이다. 에이전트가 *어떻게 일하는가*(절차)는 [에이전트 작업 규칙](../agent-workflow/SKILL.md), 상태를 세션 밖에 남기는 법은 [작업 인계](../handoff/SKILL.md)·[TODO 관리](../todo-workflow/SKILL.md)에 이미 있으므로 여기선 참조만 한다. 프로젝트마다 바꿀 값(allow-list의 스크립트명, 보호할 env 파일 경로)은 맨 아래 "필요한 프로젝트 파라미터"에, 공통 값의 원본은 dev-conventions의 `global/enforcement/`에 있다.
 
 ## 원칙
 
@@ -22,7 +25,7 @@
 ### 지침 파일은 목차다
 
 - `AGENTS.md`는 **~100줄 목차, 200줄 상한.** 백과사전이 아니다. 오너를 두고 코드처럼 리뷰한다.
-- 30줄 넘는 절차(배포·리뷰 체크리스트)는 skill로, 특정 경로에만 해당하는 제약은 `rules/`에 `paths:`로, 세부 설명은 `docs/`로. 지침 파일엔 포인터 + "언제 읽어라" 힌트만 → 이 repo의 [`templates/AGENTS.snippet.md`](../templates/AGENTS.snippet.md)가 그 형태.
+- 30줄 넘는 절차(배포·리뷰 체크리스트)는 skill로, 특정 경로에만 해당하는 제약은 `rules/`에 `paths:`로, 세부 설명은 `docs/`로. 지침 파일엔 포인터 + "언제 읽어라" 힌트만 → 전역 `always-on.md`와 skill의 `description`이 그 형태다.
 - 항상 로드되는 것은 컨텍스트 비용이 높다. **매 작업에 적용되는 소수 규칙만 인라인**, 나머지는 on-demand.
 
 ### 무엇을 어디에 (레이어 선택표)
@@ -44,11 +47,11 @@
 - 에이전트의 가장 흔한 실패: **코드 쓰고 → 자기 코드 다시 읽고 → "괜찮아 보임" → 종료. 실제 테스트 없음.** 자기평가는 항상 낙관적이다.
 - 검증은 자기 코드 재독이 아니라 **스펙·테스트·실행 결과**에 대해 한다. 가능하면 사용자처럼(E2E, 브라우저 자동화).
 - 테스트는 **지우거나 약화시켜 통과시키지 않는다**(test ratchet). 실패하면 원인을 고친다.
-- 리뷰가 중요한 변경은 생성한 세션이 아닌 **별도 평가자**(리뷰 서브에이전트, 다른 모델)에 맡긴다. 리뷰 강도는 위험에 비례 → [에이전트 작업 규칙](agent-workflow.md).
+- 리뷰가 중요한 변경은 생성한 세션이 아닌 **별도 평가자**(리뷰 서브에이전트, 다른 모델)에 맡긴다. 리뷰 강도는 위험에 비례 → [에이전트 작업 규칙](../agent-workflow/SKILL.md).
 
 ### 상태는 컨텍스트 밖에 둔다
 
-- 에이전트는 기억이 없다. 진행 상태·결정·실패한 접근은 **파일**에 → [작업 인계](handoff.md). 완료 조건은 **미리 적어둔 목록**에 → [TODO 관리](todo-workflow.md).
+- 에이전트는 기억이 없다. 진행 상태·결정·실패한 접근은 **파일**에 → [작업 인계](../handoff/SKILL.md). 완료 조건은 **미리 적어둔 목록**에 → [TODO 관리](../todo-workflow/SKILL.md).
 - 긴 작업은 compaction보다 **구조화된 handoff + 깨끗한 리셋**이 낫다. 컨텍스트 한계가 가까워지면 조급하게 마무리하는 경향(context anxiety)이 있다.
 - 세션 시작 의식: handoff 읽기 → 미완 항목 1개 선택 → **새 작업 전에 현재 상태 검증** → 작업. 한 번에 하나씩.
 
@@ -60,7 +63,7 @@
 
 ## 셋업 / 값
 
-값은 전부 [`templates/harness/`](../templates/harness/) 실파일. 여기선 무엇을/왜만.
+값은 전부 dev-conventions의 `global/enforcement/` 실파일. 여기선 무엇을/왜만.
 
 ### 권한 — 3패턴과 이행 기준
 
@@ -70,7 +73,7 @@
 | **B. curated allow-list** ← 기본값 | deny/ask/allow 균형 | (선택) OS 사용자 분리 | 파괴적 작업만 | 일상 개발 |
 | **C. sandboxed full-auto** | `bypassPermissions` | **컨테이너 + non-root + 네트워크 필터 필수** | 거의 없음 | 야간 배치, 대규모 리팩터 |
 
-- 기본은 **B**. `templates/harness/claude/settings.json`이 B다.
+- 기본은 **B**. `global/enforcement/claude/settings.fragment.json`이 B이고, 전역 설치본이 이 패턴을 모든 프로젝트에 깐다.
   - deny: 루트/홈 삭제, `sudo`, `mkfs`, gitignore되는 env 파일과 `~/.ssh`·`~/.aws` 읽기.
   - ask: `rm -rf *`, `git push`, `git reset --hard`, `git clean`, 의존성 추가/삭제, `curl`/`wget`(외부 통신).
   - allow: 프로젝트 스크립트(`pnpm lint/test/build/typecheck/format`), `git status/diff/log/add/commit`.
@@ -85,7 +88,7 @@
 |---|---|---|
 | `SessionStart` | handoff·TODO 상태 주입, 세션 ID 로깅 | 불가 |
 | `UserPromptSubmit` | 의도 분류, 계획 힌트 주입 | exit 2 |
-| `PreToolUse` (`Bash`) | 위험 명령 정규식 차단 — **`templates/harness/claude/hooks/pre-tool-use-bash-guard.sh`** | exit 2 |
+| `PreToolUse` (`Bash`) | 위험 명령 정규식 차단 — **`global/enforcement/claude/hooks/pre-tool-use-bash-guard.sh`** | exit 2 |
 | `PreToolUse` (`Edit\|Write`) | 보호 경로·워크트리/plan 준비 상태 검사 | exit 2 |
 | `PostToolUse` (`Edit\|Write`) | 변경 파일 lint/format 자동 실행, 변경 저널 | 불가(결과 주석만) |
 | `PostToolUse` (`*`) | JSONL audit — `post-tool-use-audit.sh`(선택) | 불가 |
@@ -98,7 +101,7 @@
 
 ### 툴별 파일 매핑
 
-벤더들이 서로의 파일을 읽기 시작해서(Copilot이 `CLAUDE.md`·`.claude/rules/`·`.claude/skills/`를, Cursor가 `.claude/agents/`를) 공식 표준보다 이 상호 호환이 실질적 이식성을 만든다. `AGENTS.md`를 SSOT로 두고 provider 파일은 얇은 어댑터로 — 이 repo의 [Provider entrypoints](../AGENTS.md) 규칙 그대로.
+벤더들이 서로의 파일을 읽기 시작해서(Copilot이 `CLAUDE.md`·`.claude/rules/`·`.claude/skills/`를, Cursor가 `.claude/agents/`를) 공식 표준보다 이 상호 호환이 실질적 이식성을 만든다. `AGENTS.md`를 SSOT로 두고 provider 파일은 얇은 어댑터로 — dev-conventions `AGENTS.md`의 Provider entrypoints 규칙 그대로.
 
 | 기능 | Claude Code | Codex | 커밋 |
 |---|---|---|---|
@@ -118,25 +121,15 @@
 - **`--dangerously-skip-permissions` / `bypassPermissions`를 홈 디렉터리 자격증명(`~/.ssh`, `~/.aws`, 토큰)이 닿는 호스트에서 켜지 않는다.** 컨테이너 안에서만. 프로덕션 repo에서 "이번 한 번만"도 금지.
 - `Write(경로)` 규칙은 Claude Code가 무시한다(경고만). 파일 쓰기 제한은 `Edit(경로)`로.
 - `Bash(command:...)`처럼 인자 필드를 직접 제약하는 규칙은 복합 명령으로 우회 가능해서 무시된다. `Bash(rm *)` 형태로.
-- 권한 규칙 표기는 블로그마다 다르다(`:*` vs ` *`, `tool == "Edit"` 같은 비공식 matcher). 공식: `Bash(git push *)`(`:*`와 동등), hook `matcher`는 툴 이름/정규식. `templates/harness/README.md`에 대조 기록.
+- 권한 규칙 표기는 블로그마다 다르다(`:*` vs ` *`, `tool == "Edit"` 같은 비공식 matcher). 공식: `Bash(git push *)`(`:*`와 동등), hook `matcher`는 툴 이름/정규식. `global/enforcement/README.md`에 대조 기록.
 - Codex `hooks.json`·`rules/` 스키마는 이 문서 기준일(2026-09-09)에 검증하지 못했다. 템플릿엔 `config.toml`만 있고, hook은 Claude Code 쪽만 제공한다.
 - auto mode(분류기가 액션을 심사)는 A와 B 사이의 중간 옵션이다. 분류기는 보수적으로 튜닝돼 있어(FP 0.4%, FN 17%) `--dangerously-skip-permissions` 대비 개선이지만 사람 리뷰의 대체는 아니다. 쓸 땐 기본 차단 규칙을 **처음부터 쓰지 말고 baseline을 편집**한다.
 
-## 이 규칙 적용하기
+## 필요한 프로젝트 파라미터
 
-1. 이 문서를 대상 repo `docs/conventions/harness-engineering.md`로 복사하고 상단 출처 줄을 복사일로 채운다.
-2. `templates/harness/claude/settings.json` → 대상 repo `.claude/settings.json`, `templates/harness/claude/hooks/` → `.claude/hooks/`. 이미 `settings.json`이 있으면 `permissions`·`hooks` 키를 병합한다(덮어쓰지 않는다).
-   ```sh
-   chmod +x .claude/hooks/*.sh
-   echo ".claude/settings.local.json" >> .gitignore
-   ```
-3. allow의 pnpm 스크립트명을 대상 `package.json`에 맞추고, deny의 env 파일 목록을 대상 `.gitignore`와 대조한다. 자주 쓰는 프로젝트 안 삭제(`rm -rf dist`)는 exact 규칙으로 allow에 추가.
-4. Codex를 쓰면 `templates/harness/codex/config.toml` → `.codex/config.toml`. 프로젝트 trust 1회.
-5. guard가 동작하는지 확인:
-   ```sh
-   printf '{"tool_input":{"command":"git commit -m x --no-verify"}}' | bash .claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 2
-   ```
-6. `AGENTS.md`의 `## 공통 규칙`에 포인터 한 줄 추가(전체 블록은 `templates/AGENTS.snippet.md`):
-   ```markdown
-   - .claude/·.codex/·hooks·권한·skills·서브에이전트를 만들거나 바꿀 때, 또는 AGENTS.md에 "매번/절대" 류 규칙을 추가하려 할 때: docs/conventions/harness-engineering.md
-   ```
+공통 deny/ask/allow와 guard hook은 **전역 설치본**이 깐다(원본: dev-conventions `global/enforcement/`). 프로젝트에 두는 건 그 프로젝트 고유분뿐이다.
+
+- `verify` — 검증 게이트·Stop hook이 부를 단일 진입점.
+- `generated` — Edit guard로 보호할 경로.
+- 프로젝트 `.claude/settings.json`에는 **그 프로젝트 고유 allow만** 둔다(스크립트명, `rm -rf dist` 같은 exact 규칙). 전역이 없는 환경을 대비해 최소 deny를 겹쳐 두는 것은 허용한다(백스톱).
+- 전역 설정 파일(`~/.claude/settings.json` 등)은 직접 고치지 않는다. 고칠 일이 생기면 dev-conventions 원본을 고치고 `bootstrap.sh`로 재설치한다.

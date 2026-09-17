@@ -1,9 +1,9 @@
 # Handoff: <브랜치명>
 
 <!--
-docs/handoff/<브랜치명>.md 로 복사해 쓴다(브랜치의 `/`는 `-`로 치환: todo/003-foo → todo-003-foo.md).
+`handoff` 파라미터 디렉터리(기본 `docs/handoff/`)의 `<브랜치명>.md`로 복사해 쓴다(브랜치의 `/`는 `-`로 치환: todo/003-foo → todo-003-foo.md).
 규칙: 덮어쓰기(append 금지) · 한 화면(≈50줄) 이내 · 다른 문서에 있는 내용은 경로로 참조만 · secret 금지.
-브랜치가 병합되면 이 파일도 같은 머지에서 삭제한다. 자세한 규칙은 docs/conventions/handoff.md.
+브랜치가 병합되면 이 파일도 같은 머지에서 삭제한다. 자세한 규칙은 전역 skill `handoff`(원본: dev-conventions `global/skills/handoff/SKILL.md`).
 채울 때 이 주석 블록은 지운다.
 -->
 
