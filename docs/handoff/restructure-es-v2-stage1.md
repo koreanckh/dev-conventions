@@ -1,7 +1,7 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 09:45 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 5개, origin에 push됨
+- **갱신:** 2026-09-18 09:55 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 6개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
 - **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
@@ -12,10 +12,10 @@ nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가
 
 ## 지금 상태
 
-- 단계 1(원본 구성)·2(bootstrap + 이 PC 설치) 완료. 단계 3(파일럿 nowhere)은 **구조 변경까지 끝냈고 커밋 전**이다.
-- nowhere 작업 트리(커밋 안 함 — 그 repo 규칙이 "커밋은 사람이 요청할 때만"): AGENTS.md 파라미터화(44줄), `scripts/check` 신설, `docs/decisions/001-todo-numbering-stays-local.md`, 전역 복사본 5개 삭제(자생 규칙 3개는 유지), `docs/conventions/README.md`(옛 링크 → 전역 skill 안내), `.claude/settings.json`(프로젝트 고유 allow), `.gitignore`에 settings.local 추가.
-- `./scripts/check` 실행 결과: **통과 41초**(node 검사 → lint → typecheck → server 1935 + web 730 테스트).
-- 파일럿에서 전역 계약 키 2개가 새로 필요했다 → dev-conventions에 `todo-numbering`·`commit-types` 추가하고 재설치까지 끝냈다.
+- 단계 1(원본 구성)·2(bootstrap + 이 PC 설치)·3(파일럿 nowhere) 완료. 단계 3의 **행동 검증 1건만 남았다**(아래 "다음 한 수").
+- nowhere 커밋 `8b3a9ba` (main, **push 안 함** — 사용자가 커밋까지만 요청): AGENTS.md 파라미터화, `scripts/check`, 결정 기록 2건, 전역 복사본 5개 삭제(자생 규칙 3개 + 안내 README 유지), `.claude/settings.json`.
+- nowhere `./scripts/check`: 통과 41초(node 검사 → lint → typecheck → server 1935 · web 730 · map-core 10).
+- 파일럿이 전역 계약 키 2개를 요구했다 → `todo-numbering`·`commit-types` 추가, 템플릿·skill 동시 수정, 재설치 완료.
 
 ## 이미 해봤고 안 된 것
 
@@ -25,7 +25,7 @@ nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가
 
 ## 대화에서만 나온 결정
 
-- nowhere의 handoff는 전역 규칙(브랜치당 1개·병합 시 삭제)과 다르다 — `docs/agent/`에 통합본 + to-do 갈래별 문서를 두고 완료 후에도 닫힘 표시로 남긴다. **실태를 파라미터에 적기만 했고 결정 기록은 안 만들었다**(왜 그 형태인지는 사용자만 안다). 단계 3 마무리 때 물어볼 것.
+- nowhere의 handoff 형태(`docs/agent/` 통합본 + to-do 갈래별, 끝나도 유지)는 **사용자가 의도한 것**이라고 확인했다 → 결정 기록 002로 남겼다. 전역 기본형으로 "고치려" 들지 말 것.
 - nowhere의 과거 to-do·spec·plan 안의 옛 `docs/conventions/*` 링크는 **고치지 않았다.** 그 시점 기록이라서. 대신 `docs/conventions/README.md`에 "없어진 경로 → 지금 읽을 것" 표를 뒀다.
 
 - Claude 설정 디렉터리 2개(`~/.claude`, `~/.claude-personal`) **둘 다** 설치하기로 했다(사용자 선택). skills·commands는 심링크로 공유돼 물리적으론 한 벌이다.
@@ -34,10 +34,10 @@ nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가
 
 ## 검증 상태
 
-- 마지막 실행: `./bootstrap.sh` ×2회 → 변경 0건(멱등). `--check` → 0. 커밋 후 `--check` → 1(낡음 감지 확인) → 재설치 후 0.
-- 샌드박스에서 install → uninstall 왕복: 설치분만 제거되고 원본 복원(JSON 포맷 외 diff 0). `--copy` 모드 설치·갱신 확인.
-- 실제 환경 대조: 기존 allow 96개·hook 12개 이벤트 전부 보존, `defaultMode`·`additionalDirectories`·취향 키 무변경.
-- 아직 안 돌림: 새 세션에서의 always-on 로드 확인, Codex 세션에서 skill 목록 노출 확인, 프로젝트 allow와 전역 deny/ask 합성(§13 가정 6 — 단계 3).
+- dev-conventions: `./bootstrap.sh` 재실행 변경 0건, `--check` 0. 설치 표면 해시 방식이라 문서 커밋으로는 낡음이 뜨지 않는다.
+- nowhere: `./scripts/check` 통과(커밋 직전 재실행). 전역 규칙 복사본 5 → 0.
+- 아직 안 돌림: **새 세션에서 에이전트가 `verify`를 스스로 찾아 실행하는가**(§11 단계 3 검증의 핵심). 이 세션은 그 파일을 직접 쓴 세션이라 증거가 못 된다.
+- 미판정: §13 가정 3(Gemini CLI 미설치) · 가정 6(프로젝트 allow와 전역 deny/ask 합성 — nowhere `.claude/settings.json`을 깔아뒀으니 다음 nowhere 세션에서 관찰 가능).
 
 ## 환경 (PC 간)
 
