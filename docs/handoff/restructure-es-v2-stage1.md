@@ -1,42 +1,42 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 08:55 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 마지막 커밋: 이 브랜치 HEAD(단계 1 커밋 1개, main에서 분기)
+- **갱신:** 2026-09-18 09:30 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 3개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
-- **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §5(전역 3층) · §7(이식성)
+- **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
 
 ## 다음 한 수
 
-단계 2 — `bootstrap.sh`를 §7.8 계약(`--check`/`--dry-run`/`--copy`/`--uninstall` + lock)대로 구현하고 `--dry-run`으로 이 PC 설치 계획을 먼저 본다.
+단계 3 — nowhere를 파일럿으로: `AGENTS.md`를 `project/AGENTS.template.md` 형태로 파라미터화하고, `scripts/check`를 만들고, `docs/decisions/` 첫 기록을 남기고, `docs/conventions/` 복사본을 지운다. 그 다음 실제 작업 1건을 새 구조로 수행해 에이전트가 `verify`를 스스로 찾아 실행하는지 본다.
 
 ## 지금 상태
 
-- 단계 1(원본 구성) 완료. `conventions/`·`templates/` → `global/`(always-on·skills·enforcement) + `project/`(템플릿·stacks)로 재배치, 7개 문서를 frontmatter + "필요한 프로젝트 파라미터" 형식의 skill로 변환.
-- 전역 `~/.claude/settings.json`에서 이식 가능한 deny/ask/allow를 역수집해 `global/enforcement/claude/settings.fragment.json`에 넣었다. 무엇을 버렸고 무엇이 갈렸는지는 `global/enforcement/README.md`.
-- **아직 어떤 환경에도 설치되지 않았다.** `global/`은 원본으로만 존재한다. `~/.claude`, `~/.codex`, `~/.gemini`는 손대지 않았다.
-- `/apply-conventions`는 v1(문서 복사) 동작 그대로라 상단에 "단계 5까지 실행 금지" 배너만 달아뒀다.
+- 단계 1(원본 구성)·단계 2(bootstrap + 이 PC 설치) 완료.
+- 설치됨: `~/.claude`·`~/.claude-personal`(설정 디렉터리 2개 — skills/commands는 심링크로 공유, settings.json만 별개), `~/.codex`, `~/.gemini`. 각 디렉터리에 `.dev-conventions.lock`.
+- 설치 내용: always-on 관리 구역, skill 7개 심링크, Claude settings.json 병합(deny +7 / ask +2 / guard hook 1개 append), Codex config.toml 관리 구역(approval_policy·sandbox_mode), Gemini는 always-on + 포인터 인덱스.
+- 미확인 1건: **always-on이 실제로 로드되는지는 새 세션에서 확인**해야 한다(§11 단계 2 검증 (a)). 확인법: 새 세션에서 "전역 규칙 뭐 있어?"류로 물어 `프로젝트 파라미터` 우선 규칙이 나오는지 본다.
 
 ## 이미 해봤고 안 된 것
 
-- (없음)
+- `install/targets`에 `legacy_section = ## Superpowers policy`를 따옴표 없이 썼더니 configparser가 `#`을 인라인 주석으로 먹어 빈 값이 됐다 → `#`으로 시작하는 값은 큰따옴표로 감싼다(파서가 벗겨낸다).
+- 첫 `--uninstall`이 codex에서 크래시했다. `managed["settings"]`가 항상 `{permissions:{},hooks:{}}`라 truthy → `config.toml`을 JSON으로 파싱하려 했다. 확장자로 분기하고 빈 dict는 `{}`로 정리해 고쳤다.
+- `--copy` 모드 재실행이 복사본을 갱신하지 않았다(실디렉터리는 무조건 건너뜀). lock에 기록된 우리 설치분이면 해시 비교 후 교체하도록 고쳤다.
 
 ## 대화에서만 나온 결정
 
-- `install/targets`를 단계 1에 포함했다 — §7.4 표가 이미 값을 다 정해서 단계 2로 미룰 이유가 없었다.
-- skill 저작 골격(`convention.template.md`)은 `project/`가 아니라 `global/skills/SKILL.template.md`로 뒀다. 프로젝트로 스캐폴딩되는 물건이 아니라 skill을 쓰는 골격이라서. 설치기는 `global/skills/` 아래 **디렉터리만** 링크한다는 전제가 붙는다(`install/targets`에 기록).
-- `permissions.defaultMode`는 역수집에서 뺐다(이 PC `auto` vs 템플릿 `default` — 환경마다 고를 값).
-- `.env` deny는 이 PC의 광범위 `Read(**/.env.*)` 대신 열거형으로 갔다(`.env.example`을 읽을 수 있어야 해서). 설치는 병합만 하므로 이 PC의 기존 광범위 deny는 남는다.
-- `curl`/`wget`은 전역에서 판정하지 않기로 했다(이 PC는 allow, 옛 프로젝트 템플릿은 ask — 공통이라 볼 근거 없음).
-- `pnpm add`/`pnpm remove` ask는 설계 §5.1대로 넣었다. **설치하면 이 PC에 없던 승인 프롬프트가 생긴다** — 단계 2에서 체감해보고 귀찮으면 뺀다.
+- Claude 설정 디렉터리 2개(`~/.claude`, `~/.claude-personal`) **둘 다** 설치하기로 했다(사용자 선택). skills·commands는 심링크로 공유돼 물리적으론 한 벌이다.
+- `~/.codex/AGENTS.md`의 Superpowers policy는 설계대로 관리 구역으로 대체했다. 다만 "어떤 skill을 언제 안 쓰나" 구체 목록은 always-on 2줄로 압축되면 손실이라, `agent-workflow` skill에 절을 만들어 보존했다. **Codex에서 lightweight mode가 약해졌다고 느끼면 이 결정을 먼저 의심한다**(백업: `~/.codex/AGENTS.md.bak-20260918-092353`).
+- `--check`의 SessionStart hook 자동 배선(§7.5 호출 지점 2)은 **하지 않았다.** 전역 hook은 외부 도구 관리 구역이라 항목을 더 얹기 전에 §13 가정 4가 시간으로 검증되길 기다린다. 지금은 수동 `./bootstrap.sh --check`만.
 
 ## 검증 상태
 
-- 마지막 실행: 변환 전후 본문 diff(출처 줄·"적용하기" 절 제외) → 7개 문서 전부 삭제/추가 1:1 대응, 유실 0. todo-workflow만 +16줄(적용하기 절에 있던 라벨 생성 명령을 "Project 셋업"으로 되살림).
-- `python3 -m json.tool settings.fragment.json` 통과, `bash -n hooks/*.sh` 통과, guard 동작 확인(`rm -rf /` → 2, `--no-verify` → 2, `pnpm test` → 0).
-- 아직 안 돌림: 실제 설치(단계 2). §13 가정 1~4(심링크 skill 인식, Codex skill 경로, Gemini 지원, 전역 hook 래퍼 보존)는 전부 미판정.
+- 마지막 실행: `./bootstrap.sh` ×2회 → 변경 0건(멱등). `--check` → 0. 커밋 후 `--check` → 1(낡음 감지 확인) → 재설치 후 0.
+- 샌드박스에서 install → uninstall 왕복: 설치분만 제거되고 원본 복원(JSON 포맷 외 diff 0). `--copy` 모드 설치·갱신 확인.
+- 실제 환경 대조: 기존 allow 96개·hook 12개 이벤트 전부 보존, `defaultMode`·`additionalDirectories`·취향 키 무변경.
+- 아직 안 돌림: 새 세션에서의 always-on 로드 확인, Codex 세션에서 skill 목록 노출 확인, 프로젝트 allow와 전역 deny/ask 합성(§13 가정 6 — 단계 3).
 
 ## 환경 (PC 간)
 
-- 필요 도구: bash, git, python3. 외부 서비스·secret 없음.
-- 이 repo는 아직 remote가 없다(로컬 전용). 다른 PC로 넘기려면 remote부터 붙여야 한다.
+- 필요 도구: bash, git, python3(3.11+ — `tomllib`). 외부 서비스·secret 없음.
+- 다른 PC에서는 clone 후 `./bootstrap.sh --dry-run`으로 먼저 본다. 설정 디렉터리가 없는 에이전트는 자동으로 건너뛴다.
