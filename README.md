@@ -106,7 +106,8 @@ PC마다 한 번, 이 repo에서:
 - **설정 디렉터리가 있는 에이전트에만** 설치한다. 없으면 건너뛰고 보고한다(디렉터리를 새로 만들지 않는다).
 - skills와 hook은 **심링크/절대경로**로 가리킨다 → `git pull`이 곧 갱신이다. always-on은 대상 파일 안 `<!-- BEGIN dev-conventions -->` 구역만, settings는 **없는 항목만 추가**한다. 기존 항목과 다른 도구의 hook은 건드리지 않는다.
 - 덮어쓰기 전에 `<file>.bak-<timestamp>`로 백업한다.
-- 설치 기록은 `<config>/.dev-conventions.lock`(repo 경로·commit·mode·추가한 항목). `--uninstall`은 **여기 적힌 것만** 지운다.
+- 설치 기록은 `<config>/.dev-conventions.lock`(repo 경로·commit·설치 표면 해시·mode·추가한 항목). `--uninstall`은 **여기 적힌 것만** 지운다.
+- `--check`는 커밋이 아니라 **실제로 설치되는 파일들의 해시**를 비교한다. 규칙과 무관한 커밋으로는 낡았다고 하지 않고, 규칙을 고치면 커밋 전에도 낡았다고 한다.
 - 여러 설정 디렉터리를 쓰면(예: `CLAUDE_CONFIG_DIR`) 각각 한 번씩 돌린다. lock도 각각 생긴다.
 
 `--uninstall`이 되돌리지 못하는 것: 설치할 때 **관리 구역으로 대체된 옛 수기 섹션**(예: `~/.codex/AGENTS.md`의 `## Superpowers policy`). 그 내용은 같은 자리의 `.bak-*` 파일에 있다.

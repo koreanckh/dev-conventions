@@ -322,7 +322,8 @@ dev-conventions (git · 유일한 원본)
 복사가 남는 곳(always-on 구역, settings 병합, `--copy` 모드)은 낡을 수 있다. **낡음을 없애려 하지 말고 보이게 만든다.**
 
 - 설치 시 `<config>/.dev-conventions.lock` 기록: `repo`(경로), `commit`(설치 시점 HEAD), `installed_at`, `mode`(link|copy), `managed`(자기가 넣은 settings 항목).
-- `bootstrap.sh --check`: lock의 `commit`과 repo HEAD를 비교. 다르면 종료 코드 1과 함께 한 줄 출력. repo가 없는 환경이면 조용히 0.
+- `bootstrap.sh --check`: lock과 repo를 비교. 다르면 종료 코드 1과 함께 한 줄 출력. 설치 기록이 없으면 조용히 0.
+  - **구현 메모(단계 2):** commit 비교는 규칙과 무관한 커밋마다 거짓 경보를 낸다(문서 한 줄만 고쳐도 모든 환경이 낡음). 그래서 lock에 **설치 표면 해시**(`always-on.md` + `skills/` + `enforcement/` + `install/targets` + 커맨드)를 함께 기록하고 그것으로 판정한다. `commit`은 "언제 것"을 보여주는 참고값으로 남긴다. 거짓 경보가 잦으면 아무도 안 보게 된다 — `harness-engineering`의 "80% 막으면 규칙이 비현실적"과 같은 이유다.
 - 호출 지점: (1) 수동, (2) SessionStart hook — 하루 1회로 제한, 차단하지 않음(경고 한 줄만).
 - 심링크 모드에서 남는 낡음은 "pull을 안 했다"뿐이다. 원격 비교는 네트워크가 필요하므로 **선택 기능**으로 두고, 실패하면 조용히 넘어간다.
 

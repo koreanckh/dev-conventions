@@ -81,6 +81,24 @@ def backup(path: Path, rep: Reporter, agent: str):
     rep.act(agent, "backup", str(dest))
 
 
+SURFACE = ("global/always-on.md", "global/skills", "global/enforcement",
+           "install/targets", "install/apply-conventions.md")
+
+
+def surface_digest(repo: Path) -> str:
+    """실제로 설치되는 파일들만의 해시. repo에 다른 커밋이 쌓여도 낡음으로 보지 않는다."""
+    h = hashlib.sha256()
+    for rel in SURFACE:
+        path = repo / rel
+        files = sorted(path.rglob("*")) if path.is_dir() else [path]
+        for f in files:
+            if not f.is_file():
+                continue
+            h.update(str(f.relative_to(repo)).encode())
+            h.update(f.read_bytes())
+    return h.hexdigest()
+
+
 def repo_commit(repo: Path) -> str:
     try:
         out = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
@@ -461,6 +479,7 @@ def cmd_install(repo: Path, targets: dict, args, rep: Reporter) -> int:
             "version": LOCK_VERSION,
             "repo": str(repo),
             "commit": commit,
+            "surface": surface_digest(repo),
             "installed_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
             "mode": args.mode,
             "managed": merge_managed(lock.get("managed", {}), managed),
@@ -489,15 +508,17 @@ def merge_managed(old: dict, new: dict) -> dict:
 def cmd_check(repo: Path, targets: dict, args, rep: Reporter) -> int:
     stale = 0
     commit = repo_commit(repo)
+    surface = surface_digest(repo)
     for agent in agents_to_do(targets, args.agent):
         t = targets[agent]
         config_dir = Path(expand(t["config_dir"]))
         lock = read_lock(lock_path(config_dir, t.get("lock", ".dev-conventions.lock")))
         if not lock:
             continue                       # 설치되지 않은 에이전트는 낡음 판정 대상이 아니다
-        if lock.get("commit") != commit:
-            print(f"낡음: {agent} — 설치 {lock.get('commit', '?')[:7]} ≠ repo HEAD {commit[:7]} "
-                  f"({lock.get('installed_at', '?')}) → ./bootstrap.sh")
+        if lock.get("surface") != surface:
+            print(f"낡음: {agent} — 설치된 규칙이 repo와 다르다 "
+                  f"(설치 {lock.get('commit', '?')[:7]} · {lock.get('installed_at', '?')}, repo HEAD {commit[:7]}) "
+                  f"→ ./bootstrap.sh")
             stale = 1
     return stale
 
