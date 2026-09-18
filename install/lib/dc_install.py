@@ -99,6 +99,24 @@ def surface_digest(repo: Path) -> str:
     return h.hexdigest()
 
 
+def sibling_profiles(raw_config_dir: str, installed: Path, lock_name: str) -> list[tuple[Path, str]]:
+    """같은 에이전트의 다른 계정 프로필(예: ~/.claude-personal)을 찾아 돌려준다.
+
+    한 머신에 계정을 나눠 쓰면 설정 디렉터리도 나뉜다. 그 목록은 머신 고유 값이라 저장소에 적지 않는다(§7.7).
+    대신 **설치되지 않은 프로필이 있으면 보이게** 만든다 — 조용히 빠지는 것이 제일 나쁘다.
+    """
+    m = re.search(r"\$\{([A-Za-z_][A-Za-z0-9_]*):-([^}]*)\}", raw_config_dir)
+    env_var = m.group(1) if m else None
+    # 프로필 이름은 기본 디렉터리에서 파생된다(~/.claude → ~/.claude*), 지금 설치한 곳이 아니라.
+    default_dir = Path(expand(m.group(2))) if m else installed
+    found = []
+    for cand in sorted(default_dir.parent.glob(default_dir.name + "*")):
+        if cand == installed or not cand.is_dir() or (cand / lock_name).exists():
+            continue
+        found.append((cand, env_var))
+    return found
+
+
 def repo_commit(repo: Path) -> str:
     try:
         out = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
@@ -474,6 +492,10 @@ def cmd_install(repo: Path, targets: dict, args, rep: Reporter) -> int:
 
         if t.get("commands"):
             managed["commands"] = install_commands(config_dir / t["commands"], repo, rep, agent)
+
+        for cand, env_var in sibling_profiles(t["config_dir"], config_dir, t.get("lock", ".dev-conventions.lock")):
+            hint = f"{env_var}={cand} ./bootstrap.sh --agent {agent}" if env_var else f"(설치 방법: {agent}의 설정 디렉터리를 그 경로로 두고 재실행)"
+            rep.skip(agent, "다른 프로필", f"{cand} — 설치 안 됨. 쓰는 프로필이면: {hint}")
 
         write_lock(lock_file, {
             "version": LOCK_VERSION,

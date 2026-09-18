@@ -108,7 +108,15 @@ PC마다 한 번, 이 repo에서:
 - 덮어쓰기 전에 `<file>.bak-<timestamp>`로 백업한다.
 - 설치 기록은 `<config>/.dev-conventions.lock`(repo 경로·commit·설치 표면 해시·mode·추가한 항목). `--uninstall`은 **여기 적힌 것만** 지운다.
 - `--check`는 커밋이 아니라 **실제로 설치되는 파일들의 해시**를 비교한다. 규칙과 무관한 커밋으로는 낡았다고 하지 않고, 규칙을 고치면 커밋 전에도 낡았다고 한다.
-- 여러 설정 디렉터리를 쓰면(예: `CLAUDE_CONFIG_DIR`) 각각 한 번씩 돌린다. lock도 각각 생긴다.
+- **계정 프로필마다 한 번씩 돌린다.** 회사/개인 계정을 나눠 쓰면 설정 디렉터리도 나뉜다:
+
+  ```sh
+  ./bootstrap.sh                                                   # 기본 프로필 전부
+  CLAUDE_CONFIG_DIR=~/.claude-personal ./bootstrap.sh --agent claude
+  CODEX_HOME=~/.codex-personal         ./bootstrap.sh --agent codex
+  ```
+
+  프로필 목록은 머신마다 다르므로 저장소에 적지 않는다. 대신 bootstrap이 **설치되지 않은 프로필로 보이는 디렉터리를 찾아 한 줄로 알린다**(`~/.claude*`, `~/.codex*`). 프로필끼리 `skills`·`commands`를 심링크로 공유하면 그쪽은 자동으로 "최신"이 되고 각자 파일(`settings.json`·`config.toml`)만 병합된다. lock은 프로필마다 생긴다.
 
 `--uninstall`이 되돌리지 못하는 것: 설치할 때 **관리 구역으로 대체된 옛 수기 섹션**(예: `~/.codex/AGENTS.md`의 `## Superpowers policy`). 그 내용은 같은 자리의 `.bak-*` 파일에 있다.
 
