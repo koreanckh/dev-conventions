@@ -1,25 +1,23 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 11:45 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 11개, origin에 push됨
+- **갱신:** 2026-09-18 12:15 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 13개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
 - **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
 
 ## 다음 한 수
 
-`inbox/2026-09-18-nowhere-promotion-review.md`의 체크박스 3개를 사람이 판정한다 — `refactoring-principles`를 전역 skill로 올릴지(권고: 예), `external-request-discipline` 보류를 유지할지. 승격하기로 하면 `/import-conventions`로 처리하고 nowhere 원본은 프로젝트 판정만 남기게 줄인다.
-
-그 다음은 **단계 6의 진짜 절반** — 다른 PC에서 clone + bootstrap. 계정 프로필마다 한 번씩.
+**단계 6의 진짜 절반** — 다른 PC에서 clone + `./bootstrap.sh`(계정 프로필마다). 소요 시간과 사람 손이 몇 번 가는지 잰다. 그게 끝나면 이 브랜치를 main에 병합할 수 있다(병합 때 이 파일 삭제 + 승격 트리거 질문).
 
 ## 지금 상태
 
-- 단계 1~5 완료, 6 부분 완료, 7 착수(첫 심사 완료·사람 판정 대기).
-- 전환된 프로젝트 3개 전부 push됨 — nowhere `615a66f` · bus `c398575` · mulzipsa `ac56ea8`. 복사본 13 → 0.
-- `/apply-conventions` 스캐폴딩으로 재작성 완료(실행 금지 배너 제거). 설치본도 갱신됨.
-- `handoff` skill에 승격 트리거 추가. 첫 심사 결과는 `inbox/2026-09-18-nowhere-promotion-review.md`.
-- 설치 상태: 프로필 5개(`~/.claude`·`~/.claude-personal`·`~/.codex`·`~/.codex-personal`·`~/.gemini`) 전부 최신.
-- **남은 복사본:** `blog`(3개) · `law`(6개) — 범위 밖으로 뒀다. 활성이면 이제 `/apply-conventions` 한 번이면 된다.
+- 단계 1~5·7 완료, 6은 메커니즘만 검증(다른 기계 미검증).
+- 전환된 프로젝트 3개 전부 push — nowhere `615a66f` · bus `c398575` · mulzipsa `ac56ea8`. 복사본 13 → 0.
+- **첫 승격 완료:** `refactoring-principles` → 전역 skill. nowhere 원본은 판정만 남기게 줄였다(128 → 47줄) — **nowhere 쪽은 스테이징만 하고 커밋 안 함**(그 저장소 규칙: 커밋은 사람이 요청할 때만).
+- 보류 후보 `external-request-discipline`은 `inbox/held-*.md`에 조건·승격안과 함께 살아 있다.
+- 설치: 프로필 5개 전부 최신(skill 8개). 단계 2 검증 (a) — 새 세션에서 always-on 로드 — 도 확인됐다.
+- 범위 밖 복사본: `blog`(3) · `law`(6).
 
 ## 이미 해봤고 안 된 것
 
