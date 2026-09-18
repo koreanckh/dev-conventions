@@ -1,21 +1,21 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 09:30 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 3개, origin에 push됨
+- **갱신:** 2026-09-18 09:45 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 5개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
 - **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
 
 ## 다음 한 수
 
-단계 3 — nowhere를 파일럿으로: `AGENTS.md`를 `project/AGENTS.template.md` 형태로 파라미터화하고, `scripts/check`를 만들고, `docs/decisions/` 첫 기록을 남기고, `docs/conventions/` 복사본을 지운다. 그 다음 실제 작업 1건을 새 구조로 수행해 에이전트가 `verify`를 스스로 찾아 실행하는지 본다.
+nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가 `verify`(`./scripts/check`)를 스스로 찾아 실행하는지 본다(§11 단계 3 검증). 그 다음 단계 4(degraded mode).
 
 ## 지금 상태
 
-- 단계 1(원본 구성)·단계 2(bootstrap + 이 PC 설치) 완료.
-- 설치됨: `~/.claude`·`~/.claude-personal`(설정 디렉터리 2개 — skills/commands는 심링크로 공유, settings.json만 별개), `~/.codex`, `~/.gemini`. 각 디렉터리에 `.dev-conventions.lock`.
-- 설치 내용: always-on 관리 구역, skill 7개 심링크, Claude settings.json 병합(deny +7 / ask +2 / guard hook 1개 append), Codex config.toml 관리 구역(approval_policy·sandbox_mode), Gemini는 always-on + 포인터 인덱스.
-- 미확인 1건: **always-on이 실제로 로드되는지는 새 세션에서 확인**해야 한다(§11 단계 2 검증 (a)). 확인법: 새 세션에서 "전역 규칙 뭐 있어?"류로 물어 `프로젝트 파라미터` 우선 규칙이 나오는지 본다.
+- 단계 1(원본 구성)·2(bootstrap + 이 PC 설치) 완료. 단계 3(파일럿 nowhere)은 **구조 변경까지 끝냈고 커밋 전**이다.
+- nowhere 작업 트리(커밋 안 함 — 그 repo 규칙이 "커밋은 사람이 요청할 때만"): AGENTS.md 파라미터화(44줄), `scripts/check` 신설, `docs/decisions/001-todo-numbering-stays-local.md`, 전역 복사본 5개 삭제(자생 규칙 3개는 유지), `docs/conventions/README.md`(옛 링크 → 전역 skill 안내), `.claude/settings.json`(프로젝트 고유 allow), `.gitignore`에 settings.local 추가.
+- `./scripts/check` 실행 결과: **통과 41초**(node 검사 → lint → typecheck → server 1935 + web 730 테스트).
+- 파일럿에서 전역 계약 키 2개가 새로 필요했다 → dev-conventions에 `todo-numbering`·`commit-types` 추가하고 재설치까지 끝냈다.
 
 ## 이미 해봤고 안 된 것
 
@@ -24,6 +24,9 @@
 - `--copy` 모드 재실행이 복사본을 갱신하지 않았다(실디렉터리는 무조건 건너뜀). lock에 기록된 우리 설치분이면 해시 비교 후 교체하도록 고쳤다.
 
 ## 대화에서만 나온 결정
+
+- nowhere의 handoff는 전역 규칙(브랜치당 1개·병합 시 삭제)과 다르다 — `docs/agent/`에 통합본 + to-do 갈래별 문서를 두고 완료 후에도 닫힘 표시로 남긴다. **실태를 파라미터에 적기만 했고 결정 기록은 안 만들었다**(왜 그 형태인지는 사용자만 안다). 단계 3 마무리 때 물어볼 것.
+- nowhere의 과거 to-do·spec·plan 안의 옛 `docs/conventions/*` 링크는 **고치지 않았다.** 그 시점 기록이라서. 대신 `docs/conventions/README.md`에 "없어진 경로 → 지금 읽을 것" 표를 뒀다.
 
 - Claude 설정 디렉터리 2개(`~/.claude`, `~/.claude-personal`) **둘 다** 설치하기로 했다(사용자 선택). skills·commands는 심링크로 공유돼 물리적으론 한 벌이다.
 - `~/.codex/AGENTS.md`의 Superpowers policy는 설계대로 관리 구역으로 대체했다. 다만 "어떤 skill을 언제 안 쓰나" 구체 목록은 always-on 2줄로 압축되면 손실이라, `agent-workflow` skill에 절을 만들어 보존했다. **Codex에서 lightweight mode가 약해졌다고 느끼면 이 결정을 먼저 의심한다**(백업: `~/.codex/AGENTS.md.bak-20260918-092353`).
