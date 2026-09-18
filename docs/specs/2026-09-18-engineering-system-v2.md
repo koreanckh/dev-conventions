@@ -521,6 +521,8 @@ dev-conventions/
   - `refactoring-principles` → **승격 권고**(실패 관찰 있음, 스택 무관, 에이전트가 자주 어김)
   - `external-request-discipline` → **보류**(실패는 셋이나 관찰됐지만 스크래핑 축을 가진 저장소가 nowhere뿐이다). 되살릴 조건과 승격할 7줄을 미리 적어 뒀다 — 두 번째 저장소에 축이 생기면 재심사 없이 올린다.
   - `map-module` → 프로젝트 사실로 유지.
+- **첫 승격 완료**(같은 날, 사람 판정): `refactoring-principles` → `global/skills/refactoring-principles/`. nowhere 원본은 128줄 → 47줄로 줄어 **그 저장소의 판정만** 남았다(공통화 판정 표·`sqlToQuery` 관용구·경계 테스트 목록). 분리 뒤 원본 문장 58개를 대조해 내용 유실 0을 확인했다. 보류 건은 `inbox/held-external-request-discipline.md`에 조건·승격안과 함께 살아 있다. **승격 루프가 한 바퀴 돌았다** — 프로젝트에서 자란 규칙이 실패 관찰을 근거로 심사를 거쳐 전역이 되고, 프로젝트엔 적용 판정만 남는 형태.
+- **단계 2 검증 (a) 완료:** 설치 후 처음 열린 새 세션이 `~/.claude-personal/CLAUDE.md`의 always-on 구역을 로드했다. 단계 2의 미확인 항목은 이걸로 없다.
 
 ---
 

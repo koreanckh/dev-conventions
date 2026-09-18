@@ -5,7 +5,7 @@
 **규칙은 환경에 설치하고, 프로젝트에는 값과 사실만 둔다.** 규칙 본문을 프로젝트로 복사하지 않으므로 드리프트할 복사본이 없다. 설계 근거와 단계별 계획: `docs/specs/2026-09-18-engineering-system-v2.md`.
 
 > **현재 상태:** 설계 §11 **단계 1~5 완료** — 이 PC 설치, 활성 프로젝트 3개(nowhere·bus·mulzipsa) 전환, `/apply-conventions` 스캐폴딩 재작성까지.
-> 남은 것: 단계 6(다른 PC에서 clone + bootstrap — **이 전까지 이식성은 미검증**), 단계 7(승격 트리거).
+> 단계 7(승격 루프) 가동 — 첫 승격: `refactoring-principles`. 남은 것: 단계 6의 다른 PC 검증(**이 전까지 이식성은 미검증**).
 
 ## 규칙 목록
 
@@ -19,6 +19,7 @@
 | 작업 인계 | `global/skills/handoff/SKILL.md` | 브랜치당 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · WIP 커밋과 함께 push · 병합 시 삭제 |
 | 트랜잭션 관리 | `global/skills/transaction-management/SKILL.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
 | 배포 | `global/skills/deployment/SKILL.md` | 이미지 build와 운영 배포 분리 · 불변 태그 · 실행/교체 전략 선택 · secret/healthcheck/롤백·DB migration 경계 |
+| 리팩토링 원칙 | `global/skills/refactoring-principles/SKILL.md` | 리팩토링은 동작을 안 바꾼다(커밋 분리) · 특성 테스트 먼저 · 공통화 기준은 「같은 이유로 변하는가」 · 갈라진 이유 먼저 읽기 · 멈출 때 · **첫 승격 규칙**(nowhere, 2026-09-18) |
 | 하네스 설정 | `global/skills/harness-engineering/SKILL.md` | 지침 < hook/권한 < 환경 계층 · "매번/절대"는 hook·deny로 · 지침 파일은 목차 · 생성/평가 분리 · 권한 3패턴(기본 B) |
 
 그 밖의 두 층:
