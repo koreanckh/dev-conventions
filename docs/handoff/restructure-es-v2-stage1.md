@@ -1,21 +1,23 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 09:55 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 6개, origin에 push됨
+- **갱신:** 2026-09-18 11:20 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 9개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
 - **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
 
 ## 다음 한 수
 
-nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가 `verify`(`./scripts/check`)를 스스로 찾아 실행하는지 본다(§11 단계 3 검증). 그 다음 단계 4(degraded mode).
+단계 6 — **다른 PC에서 clone + `./bootstrap.sh`.** 소요 시간과 수동 개입 횟수를 재고, 이 전까지 이식성은 미검증이라는 점을 잊지 않는다. 그 PC의 계정 프로필(회사/개인)마다 한 번씩 돌려야 한다.
 
 ## 지금 상태
 
-- 단계 1(원본 구성)·2(bootstrap + 이 PC 설치)·3(파일럿 nowhere) 완료. 단계 3의 **행동 검증 1건만 남았다**(아래 "다음 한 수").
-- nowhere 커밋 `8b3a9ba` (main, **push 안 함** — 사용자가 커밋까지만 요청): AGENTS.md 파라미터화, `scripts/check`, 결정 기록 2건, 전역 복사본 5개 삭제(자생 규칙 3개 + 안내 README 유지), `.claude/settings.json`.
-- nowhere `./scripts/check`: 통과 41초(node 검사 → lint → typecheck → server 1935 · web 730 · map-core 10).
-- 파일럿이 전역 계약 키 2개를 요구했다 → `todo-numbering`·`commit-types` 추가, 템플릿·skill 동시 수정, 재설치 완료.
+- 단계 1~5 완료. 남은 것은 단계 6(두 번째 환경)·7(승격 트리거).
+- 전환 완료된 프로젝트 3개 — nowhere `615a66f`(push됨) · bus `c398575` · mulzipsa `ac56ea8`(둘 다 **로컬 커밋, push 안 함**).
+- 세 곳 모두 `verify` 통과 확인. nowhere `./scripts/check` · bus `./scripts/check` · mulzipsa `./scripts/verify-all.sh`(기존 스크립트 재사용).
+- `/apply-conventions`는 스캐폴딩으로 재작성해 설치까지 끝냈다(실행 금지 배너 제거).
+- 설치 상태: `~/.claude`·`~/.claude-personal`·`~/.codex`·`~/.codex-personal`·`~/.gemini` 전부 최신.
+- **아직 복사본이 남은 저장소 2개:** `blog`(3개) · `law`(6개). 사용자가 범위를 bus·mulzipsa로 한정했다 — 활성 프로젝트인지 확인 후 처리할지 정한다.
 
 ## 이미 해봤고 안 된 것
 
@@ -24,6 +26,10 @@ nowhere에서 **새 세션**으로 작은 작업 1건을 시켜, 에이전트가
 - `--copy` 모드 재실행이 복사본을 갱신하지 않았다(실디렉터리는 무조건 건너뜀). lock에 기록된 우리 설치분이면 해시 비교 후 교체하도록 고쳤다.
 
 ## 대화에서만 나온 결정
+
+- 세 프로젝트 **전부** to-do 번호를 자체 배정하고 있었다(이슈 번호와 불일치) → 전부 `todo-numbering: local` + 결정 기록. 전역 기본값(`issue`)이 실제로는 어느 저장소에서도 안 쓰이고 있다 — 기본값을 바꿀지는 별개 판단으로 남겨 둔다.
+- bus의 Python(`bus-data`) 검증은 `verify`에서 **뺐다**(ruff·mypy 미설치, 전용 venv 없음). 빠진 사실과 수동 실행법을 스크립트 주석에 적었다.
+- mulzipsa의 `verify-all.sh`는 **부작용이 있다** — 앱 검증이 추적 파일(`ios/Flutter/*.xcconfig`)을 다시 쓴다. AGENTS.md에 되돌리라고 적어 뒀다.
 
 - nowhere의 handoff 형태(`docs/agent/` 통합본 + to-do 갈래별, 끝나도 유지)는 **사용자가 의도한 것**이라고 확인했다 → 결정 기록 002로 남겼다. 전역 기본형으로 "고치려" 들지 말 것.
 - nowhere의 과거 to-do·spec·plan 안의 옛 `docs/conventions/*` 링크는 **고치지 않았다.** 그 시점 기록이라서. 대신 `docs/conventions/README.md`에 "없어진 경로 → 지금 읽을 것" 표를 뒀다.
