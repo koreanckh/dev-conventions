@@ -1,23 +1,25 @@
 # Handoff: restructure/es-v2-stage1
 
-- **갱신:** 2026-09-18 11:20 · home
-- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 9개, origin에 push됨
+- **갱신:** 2026-09-18 11:45 · home
+- **브랜치:** restructure/es-v2-stage1 (base: main) · 커밋 11개, origin에 push됨
 - **워크트리:** 없음
 - **TODO:** 없음 (이 repo는 to-do 체계 미적용)
 - **먼저 읽을 것:** `docs/specs/2026-09-18-engineering-system-v2.md` §11(적용 단계) · §13(가정 판정 기록) · `README.md`의 "설치와 제거"
 
 ## 다음 한 수
 
-단계 6 — **다른 PC에서 clone + `./bootstrap.sh`.** 소요 시간과 수동 개입 횟수를 재고, 이 전까지 이식성은 미검증이라는 점을 잊지 않는다. 그 PC의 계정 프로필(회사/개인)마다 한 번씩 돌려야 한다.
+`inbox/2026-09-18-nowhere-promotion-review.md`의 체크박스 3개를 사람이 판정한다 — `refactoring-principles`를 전역 skill로 올릴지(권고: 예), `external-request-discipline` 보류를 유지할지. 승격하기로 하면 `/import-conventions`로 처리하고 nowhere 원본은 프로젝트 판정만 남기게 줄인다.
+
+그 다음은 **단계 6의 진짜 절반** — 다른 PC에서 clone + bootstrap. 계정 프로필마다 한 번씩.
 
 ## 지금 상태
 
-- 단계 1~5 완료. 남은 것은 단계 6(두 번째 환경)·7(승격 트리거).
-- 전환 완료된 프로젝트 3개 — nowhere `615a66f`(push됨) · bus `c398575` · mulzipsa `ac56ea8`(둘 다 **로컬 커밋, push 안 함**).
-- 세 곳 모두 `verify` 통과 확인. nowhere `./scripts/check` · bus `./scripts/check` · mulzipsa `./scripts/verify-all.sh`(기존 스크립트 재사용).
-- `/apply-conventions`는 스캐폴딩으로 재작성해 설치까지 끝냈다(실행 금지 배너 제거).
-- 설치 상태: `~/.claude`·`~/.claude-personal`·`~/.codex`·`~/.codex-personal`·`~/.gemini` 전부 최신.
-- **아직 복사본이 남은 저장소 2개:** `blog`(3개) · `law`(6개). 사용자가 범위를 bus·mulzipsa로 한정했다 — 활성 프로젝트인지 확인 후 처리할지 정한다.
+- 단계 1~5 완료, 6 부분 완료, 7 착수(첫 심사 완료·사람 판정 대기).
+- 전환된 프로젝트 3개 전부 push됨 — nowhere `615a66f` · bus `c398575` · mulzipsa `ac56ea8`. 복사본 13 → 0.
+- `/apply-conventions` 스캐폴딩으로 재작성 완료(실행 금지 배너 제거). 설치본도 갱신됨.
+- `handoff` skill에 승격 트리거 추가. 첫 심사 결과는 `inbox/2026-09-18-nowhere-promotion-review.md`.
+- 설치 상태: 프로필 5개(`~/.claude`·`~/.claude-personal`·`~/.codex`·`~/.codex-personal`·`~/.gemini`) 전부 최신.
+- **남은 복사본:** `blog`(3개) · `law`(6개) — 범위 밖으로 뒀다. 활성이면 이제 `/apply-conventions` 한 번이면 된다.
 
 ## 이미 해봤고 안 된 것
 
@@ -39,6 +41,8 @@
 - `--check`의 SessionStart hook 자동 배선(§7.5 호출 지점 2)은 **하지 않았다.** 전역 hook은 외부 도구 관리 구역이라 항목을 더 얹기 전에 §13 가정 4가 시간으로 검증되길 기다린다. 지금은 수동 `./bootstrap.sh --check`만.
 
 ## 검증 상태
+
+- 단계 6 부분 검증: 새 clone + 가짜 HOME으로 설치 전 과정 확인(심링크·hook이 clone 경로를 가리킴, 재실행 0건, 없는 에이전트 건너뜀, `--check` 0). **남은 미검증분은 "다른 기계"뿐이다.**
 
 - dev-conventions: `./bootstrap.sh` 재실행 변경 0건, `--check` 0. 설치 표면 해시 방식이라 문서 커밋으로는 낡음이 뜨지 않는다.
 - nowhere: `./scripts/check` 통과(커밋 직전 재실행). 전역 규칙 복사본 5 → 0.
