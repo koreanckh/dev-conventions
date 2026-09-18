@@ -478,6 +478,19 @@ dev-conventions/
 5. always-on 15줄 예산이 실제로 충분한가. — 파일럿에서 판단.
 6. 프로젝트 `.claude/settings.json`의 allow가 전역 deny/ask와 의도대로 합성되는가(평가 순서 deny → ask → allow).
 
+### 판정 (2026-09-18 · 단계 2에서 실측)
+
+| # | 판정 | 근거 |
+|---|---|---|
+| 1 | **참** | `~/.claude/skills/<name>` 심링크 설치 직후 같은 세션에서 7개 skill이 전부 목록에 노출됐다. `--copy` 폴백은 구현해 뒀지만 이 환경에선 필요 없다 |
+| 2 | **참(경로·형식)** | `~/.codex/skills/`가 이미 존재하고 기존 skill(`simai`)이 같은 `name`/`description` frontmatter를 쓴다. 우리 파일이 그대로 들어간다. 실제 Codex 세션에서 목록 노출은 아직 확인 안 함 |
+| 3 | **판정 불가** | 이 PC에 Gemini CLI가 설치돼 있지 않다(`~/.gemini`는 Antigravity 것). 포인터 인덱스를 유지하고, CLI를 깔면 다시 본다 |
+| 4 | **참(현재까지)** | 전역 `settings.json`의 12개 이벤트에 동일 래퍼가 하나씩 걸려 있다. 배열에 항목을 **append**한 뒤 기존 12개가 전부 남아 있음을 확인했다. 그 도구가 나중에 배열을 통째로 덮어쓰는지는 시간이 지나야 안다 → `--check`/재설치로 복구 가능 |
+| 5 | 미판정 | always-on 현재 11줄(예산 15). 파일럿에서 본다 |
+| 6 | 미판정 | 단계 3(파일럿)에서 본다 |
+
+설치 자체의 검증(단계 2 완료 조건): (a) always-on은 **새 세션에서 확인 필요** — 파일은 `~/.claude/CLAUDE.md`·`~/.claude-personal/CLAUDE.md`·`~/.codex/AGENTS.md`·`~/.gemini/GEMINI.md`의 관리 구역에 설치됨 (b) skill 7개 노출 ✅ (c) 기존 hook 12개·allow 96개 전부 보존, deny +7 / ask +2만 추가 ✅ (d) 재실행 변경 0건 ✅
+
 ---
 
 ## 14. 안 하기로 한 것과 이유

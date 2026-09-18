@@ -24,10 +24,10 @@ global/        환경(전역)에 설치되는 것. 강제력 3층
   skills/SKILL.template.md  새 skill 골격 (이 repo 안에서만 씀)
   enforcement/<agent>/  권한·hook 실파일. 모델이 우회 못 하는 층
 project/       프로젝트에 스캐폴딩되는 것 (템플릿 + 스택 config)
-install/       targets(설치 매핑) + apply-conventions.md
+install/       targets(설치 매핑) · lib/dc_install.py(설치 동작) · apply-conventions.md
 inbox/         다른 프로젝트 원자료. `/import-conventions`로 정규화. 처리분은 `inbox/processed/`
 docs/specs/    설계 문서
-bootstrap.sh   PC마다 1회. 전역 설치(§7.8 계약은 단계 2에서 구현)
+bootstrap.sh   PC마다 1회. 전역 설치 — `--dry-run`/`--check`/`--copy`/`--uninstall`
 ```
 
 - `global/`은 설치되므로 **repo 밖 경로를 상대 링크로 걸지 않는다.** skill 사이 링크(`../<name>/SKILL.md`)만 설치 후에도 유효하다. repo 안의 다른 파일은 "dev-conventions의 `<경로>`"처럼 글로 가리킨다.

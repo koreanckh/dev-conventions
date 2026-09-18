@@ -4,8 +4,8 @@
 
 **규칙은 환경에 설치하고, 프로젝트에는 값과 사실만 둔다.** 규칙 본문을 프로젝트로 복사하지 않으므로 드리프트할 복사본이 없다. 설계 근거와 단계별 계획: `docs/specs/2026-09-18-engineering-system-v2.md`.
 
-> **현재 상태:** 설계 §11 **단계 1(원본 구성) 완료**. 전역 설치(`bootstrap.sh` §7.8 계약)는 단계 2에서 구현한다.
-> 그때까지 `global/`은 원본으로만 존재하고 어떤 환경에도 설치돼 있지 않다. `/apply-conventions`도 단계 5 재작성 전까지 실행하지 않는다.
+> **현재 상태:** 설계 §11 **단계 2(bootstrap + 이 PC 설치) 완료**. 다음은 단계 3(파일럿 프로젝트 1개).
+> `/apply-conventions`는 단계 5에서 스캐폴딩으로 재작성할 때까지 실행하지 않는다.
 
 ## 규칙 목록
 
@@ -44,8 +44,9 @@ project/                   ── 프로젝트에 스캐폴딩되는 것 ──
   stacks/nestjs · vite-react · next    실제 config 파일
 install/
   targets                  에이전트별 설치 매핑
+  lib/dc_install.py        설치 동작(구역 교체·키 병합·심링크·lock)
   apply-conventions.md     프로젝트 스캐폴딩 커맨드 (단계 5에서 재작성)
-bootstrap.sh               PC마다 1회 실행
+bootstrap.sh               PC마다 1회 실행 — 설치/갱신/검사/제거
 inbox/                     다른 프로젝트 원자료 → /import-conventions
 docs/specs/                설계 문서
 AGENTS.md                  이 repo 작업 지침 (CLAUDE.md·GEMINI.md는 얇은 어댑터)
@@ -87,8 +88,31 @@ AGENTS.md                  이 repo 작업 지침 (CLAUDE.md·GEMINI.md는 얇�
 4. 새 파라미터를 쓰면 `project/AGENTS.template.md`를 같은 커밋에서 고친다.
 5. 위 "규칙 목록" 표에 한 줄 추가.
 
+## 설치와 제거
+
+PC마다 한 번, 이 repo에서:
+
+```sh
+./bootstrap.sh              # 설치/갱신 (멱등 — 두 번 돌려도 결과 같음)
+./bootstrap.sh --dry-run    # 바뀔 내용만 출력. 아무것도 쓰지 않는다
+./bootstrap.sh --check      # 낡음 검사만. 0=최신, 1=낡음
+./bootstrap.sh --copy       # 심링크를 못 쓰는 환경
+./bootstrap.sh --uninstall  # lock에 기록된 자기 설치분만 제거
+./bootstrap.sh --agent claude   # 한 에이전트만
+```
+
+설치 대상은 `install/targets`가 정하고, 실제 동작은 `install/lib/dc_install.py`가 한다. 규칙:
+
+- **설정 디렉터리가 있는 에이전트에만** 설치한다. 없으면 건너뛰고 보고한다(디렉터리를 새로 만들지 않는다).
+- skills와 hook은 **심링크/절대경로**로 가리킨다 → `git pull`이 곧 갱신이다. always-on은 대상 파일 안 `<!-- BEGIN dev-conventions -->` 구역만, settings는 **없는 항목만 추가**한다. 기존 항목과 다른 도구의 hook은 건드리지 않는다.
+- 덮어쓰기 전에 `<file>.bak-<timestamp>`로 백업한다.
+- 설치 기록은 `<config>/.dev-conventions.lock`(repo 경로·commit·mode·추가한 항목). `--uninstall`은 **여기 적힌 것만** 지운다.
+- 여러 설정 디렉터리를 쓰면(예: `CLAUDE_CONFIG_DIR`) 각각 한 번씩 돌린다. lock도 각각 생긴다.
+
+`--uninstall`이 되돌리지 못하는 것: 설치할 때 **관리 구역으로 대체된 옛 수기 섹션**(예: `~/.codex/AGENTS.md`의 `## Superpowers policy`). 그 내용은 같은 자리의 `.bak-*` 파일에 있다.
+
 ## 이동성
 
-- 이 repo를 public으로 두면 새 PC는 clone 후 `./bootstrap.sh` 한 번으로 같은 상태가 된다(스크립트·비밀정보 없음). 단계 2부터 유효하다.
+- 이 repo를 public으로 두면 새 PC는 clone 후 `./bootstrap.sh` 한 번으로 같은 상태가 된다(스크립트·비밀정보 없음). 의존성은 bash·git·python3뿐이다.
 - 설치는 **가리킬 수 있으면 가리킨다**: skills와 hook은 심링크, always-on은 대상 파일 안 관리 구역만 교체, settings는 키 단위 병합. 복사 표면적이 `프로젝트 수 × 문서 수`에서 `환경 수 × 1`로 줄어든다.
 - 전역 설정 파일을 직접 고치지 않는다. 고칠 일이 생기면 이 repo를 고치고 재설치한다.
