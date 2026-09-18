@@ -492,6 +492,24 @@ dev-conventions/
 
 설치 자체의 검증(단계 2 완료 조건): (a) always-on은 **새 세션에서 확인 필요** — 파일은 `~/.claude/CLAUDE.md`·`~/.claude-personal/CLAUDE.md`·`~/.codex/AGENTS.md`·`~/.gemini/GEMINI.md`의 관리 구역에 설치됨 (b) skill 7개 노출 ✅ (c) 기존 hook 12개·allow 96개 전부 보존, deny +7 / ask +2만 추가 ✅ (d) 재실행 변경 0건 ✅
 
+### 단계 3·4 실측 (2026-09-18 · nowhere 파일럿)
+
+같은 프롬프트로 두 세션을 헤드리스로 돌려 비교했다. 과제는 실제 결함 하나(경매 상세의 「← 매각 목록」이 목록 조건을 버린다). `verify`·`AGENTS.md`·검증에 대한 힌트는 주지 않았다.
+
+| | A: 전역 설치 있음 | B: degraded(always-on·skill·전역 권한 제거) |
+|---|---|---|
+| `./scripts/check`를 스스로 찾아 실행 | **예** | **예** |
+| 프로젝트 문맥 참조 | `docs/decisions/` 목록, 자생 규칙, handoff | `#083`·`#093`(색인 정책) to-do |
+| 자동 생성물 침범 | 없음 | 없음 |
+| 커밋 | 안 함 | 안 함 |
+| **절차 skill 호출** | **없음** | **`superpowers:systematic-debugging` 호출** |
+| 접근 | 기존 패턴(localStorage query-memory) 답습 | 쿼리 파라미터 — 크롤 표면을 근거로 직접 판단 |
+
+- **단계 3 합격.** `verify`는 힌트 없이 발견돼 실행됐다. 파라미터 줄이 자기완결적이면 에이전트는 그것을 쓴다.
+- **단계 4 합격.** §7.6의 "있다" 열(`verify`·`generated`·결정 문맥)이 전역 없이도 그대로 작동했다. "없다" 열도 실측됐다 — B는 lightweight mode 정책이 사라지자 Superpowers의 "1% 규칙"이 이겨 절차 skill을 불렀다. **없어지는 것은 스타일이고 남는 것은 프로젝트 무결성**이라는 판정 기준이 실제로 그 선에서 갈렸다.
+- 덤으로 나온 사실: **프로젝트 `.claude/settings.json`의 allow는 그 설정 디렉터리에서 워크스페이스를 trust하기 전까지 무시된다**(`this workspace has not been trusted`). 전역이 없는 새 환경에서 프로젝트 백스톱은 **자동이 아니다** — 첫 대화형 실행의 trust 수락이나 `hasTrustDialogAccepted`가 필요하다. §13 가정 6은 이 조건이 붙은 채로 참이다.
+- 방법 메모: degraded는 인증된 프로필에서 `bootstrap.sh --uninstall` → 세션 → 재설치로 만들었다. 빈 `CLAUDE_CONFIG_DIR`는 Keychain 항목이 설정 디렉터리 경로로 갈려 로그인을 새로 해야 해서 헤드리스로는 못 쓴다.
+
 ---
 
 ## 14. 안 하기로 한 것과 이유
