@@ -1,6 +1,6 @@
 # Personal Engineering System — 설계 v2
 
-- Status: Draft v2 (2026-09-18) · v1(`2026-09-17-engineering-system-v1.md`)을 대체
+- Status: **적용됨**(2026-09-18, 단계 6의 다른 PC 검증만 남음) · v1(`2026-09-17-engineering-system-v1.md`)을 대체
 - 구현 저장소: 기존 `dev-conventions`를 그대로 쓴다. 새 저장소를 만들지 않고 이름도 바꾸지 않는다.
 - 적용 범위: 본인이 쓰는 **모든 개발 환경**(PC·OS·에이전트)과 모든 프로젝트
 - 이 문서는 설계만 다룬다. 적용은 §11 단계대로, 각 단계 검증을 통과한 뒤 다음으로 넘어간다.
@@ -523,6 +523,17 @@ dev-conventions/
   - `map-module` → 프로젝트 사실로 유지.
 - **첫 승격 완료**(같은 날, 사람 판정): `refactoring-principles` → `global/skills/refactoring-principles/`. nowhere 원본은 128줄 → 47줄로 줄어 **그 저장소의 판정만** 남았다(공통화 판정 표·`sqlToQuery` 관용구·경계 테스트 목록). 분리 뒤 원본 문장 58개를 대조해 내용 유실 0을 확인했다. 보류 건은 `inbox/held-external-request-discipline.md`에 조건·승격안과 함께 살아 있다. **승격 루프가 한 바퀴 돌았다** — 프로젝트에서 자란 규칙이 실패 관찰을 근거로 심사를 거쳐 전역이 되고, 프로젝트엔 적용 판정만 남는 형태.
 - **단계 2 검증 (a) 완료:** 설치 후 처음 열린 새 세션이 `~/.claude-personal/CLAUDE.md`의 always-on 구역을 로드했다. 단계 2의 미확인 항목은 이걸로 없다.
+
+### 남은 일 (브랜치 병합 시점 · 2026-09-18)
+
+이 저장소엔 to-do 체계가 없어서 병합 때 handoff에서 옮겨 온 남은 일을 여기 둔다.
+
+- **단계 6** — 다른 PC에서 `git clone` → `./bootstrap.sh`(계정 프로필마다). 소요 시간·사람 손이 몇 번 가는지 잰다.
+- **열린 질문: `todo-numbering`의 기본값.** 전환한 저장소 3개가 **전부** `local`이었다. 기본값 `issue`를 쓰는 저장소가 하나도 없다 — 기본값을 `local`로 뒤집을지, 신규 저장소부터 `issue`를 쓸지 정한다.
+- **승격 후보 대기:** `inbox/2026-09-18-es-v2-merge-lessons.md`(스테이징 규율 · 하네스 도구 사실 3개) · `inbox/held-external-request-discipline.md`(조건부).
+- **범위 밖 복사본:** `blog`(3) · `law`(6). 활성이면 `/apply-conventions`.
+- **보류한 배선:** `--check`의 SessionStart hook 자동 실행(§7.5). 전역 hook 배열을 외부 도구가 덮어쓰지 않는지(§13 가정 4)가 시간으로 확인된 뒤에.
+- **Codex 관찰:** `~/.codex/AGENTS.md`의 옛 Superpowers policy를 관리 구역으로 대체했다. Codex에서 lightweight mode가 약해지면 이 결정부터 의심한다(구체 목록은 `agent-workflow` skill에 보존, 백업은 `~/.codex/AGENTS.md.bak-20260918-092353`).
 
 ---
 
