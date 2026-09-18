@@ -21,9 +21,11 @@
 - issues: github:<owner/repo>
 - board: github-project:<project-owner>/<project-number> (`<Project title>`)
 - todo: docs/to-do/ — 상태 SSOT. 완료분은 `done/`
+- todo-numbering: <issue | local> — `issue`면 GitHub 이슈 번호를 그대로 쓴다(기본). `local`이면 저장소가 자체 배정하며 이유를 `decisions`에 남긴다
 - decisions: docs/decisions/ — 기존 결정. 뒤집기 전에 읽는다
 - handoff: docs/handoff/ — 브랜치당 1개. 병합 시 삭제
 - ops: <예: DEPLOY.md> — 배포·운영(선택)
+- commit-types: <예: feat, fix, chore, refactor, style, docs, wip> — 이 저장소에서 쓰는 Conventional Commits type
 - worktree: <생략 | never> — `never`면 이유를 `decisions`에 남긴다
 
 <!-- 완료 기준처럼 이 프로젝트에서만 참인 규칙은 아래에 한 줄씩. 전역 규칙을 다시 쓰지 않는다. -->

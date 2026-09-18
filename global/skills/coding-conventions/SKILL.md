@@ -17,7 +17,7 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 
 ### 커밋 메시지 — Conventional Commits
 - 형식: `type(scope): 설명`.
-- type: `feat`, `fix`, `chore`, `refactor`, `style`, `docs`, `wip`.
+- type: `commit-types` 파라미터의 목록. 기본 제안값은 `feat`, `fix`, `chore`, `refactor`, `style`, `docs`, `wip`.
 - `wip`은 **handoff를 동반한 세션 중단 커밋 전용**이다 → [작업 인계](../handoff/SKILL.md). 브랜치를 병합할 땐 squash하거나 정식 type으로 다시 쓴다.
 - scope는 모듈/기능명 (`feat(notification):`, `fix(auth):`, `refactor(db):`).
 - 설명은 한국어 허용. 이슈 참조는 `(#12)` 형태로 뒤에 붙임.
@@ -90,5 +90,6 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 
 - `package-manager` — 커맨드·lockfile·`packageManager` 필드가 전부 이 값에서 나온다. node 프로젝트의 기본 제안값은 pnpm이다.
 - `stack` — 어느 `project/stacks/<stack>/` config로 시작했는지. 위 "스택별 기본값"에서 읽을 줄을 고르는 값이다.
+- `commit-types` — 이 저장소에서 쓰는 Conventional Commits type 목록. `wip`이 없으면 세션 중단 커밋도 정식 type으로 쓴다.
 - `generated` — 직접 수정하지 않는 자동 생성물 목록.
 - `verify` / `verify-quick` — 검증 게이트에서 실제로 실행하는 명령.
