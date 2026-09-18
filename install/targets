@@ -1,0 +1,48 @@
+# dev-conventions 설치 매핑 (설계 §7.4)
+#
+# `bootstrap.sh`가 읽는다. 에이전트별 차이는 이 파일과 `global/enforcement/<agent>/`에만 있다.
+# `global/always-on.md`와 `global/skills/`에는 에이전트 분기가 없다.
+#
+# 형식: 섹션 = 에이전트, `키 = 값`. `#` 뒤는 주석(값이 `#`으로 시작하면 큰따옴표로 감싼다). 값의 `${VAR:-default}`는 전개된다.
+# 규칙:
+#   - `config_dir`가 **존재하지 않으면 그 에이전트는 건너뛰고 보고한다.** 디렉터리를 새로 만들지 않는다.
+#   - `always_on`: 대상 파일 안 `<!-- BEGIN dev-conventions -->` … `<!-- END dev-conventions -->` 구역만 교체. 구역 밖은 보존.
+#   - `skills`: `<값>/<name>` → `<repo>/global/skills/<name>` 디렉터리 심링크(`--copy`면 복사).
+#   - `settings`: 키 단위 병합. 추가한 항목만 lock의 `managed`에 기록하고, 다음 설치 때 그 항목만 갱신·제거한다.
+#   - `pointer_index = yes`: 네이티브 skill 지원이 없는 에이전트. always-on 구역 **끝에** `- <description>: <절대경로>` 목록을 자동 생성한다.
+#   - `legacy_section`: 설치 전에 쓰던 수기 섹션. 관리 구역이 아직 없고 이 섹션이 있으면 **그 섹션을 관리 구역으로 대체**한다(1회 이관).
+#   - 덮어쓰기 전에는 항상 `<file>.bak-<timestamp>` 백업.
+
+[claude]
+config_dir    = ${CLAUDE_CONFIG_DIR:-$HOME/.claude}
+always_on     = CLAUDE.md
+skills        = skills
+settings      = settings.json
+settings_src  = global/enforcement/claude/settings.fragment.json
+hooks_src     = global/enforcement/claude/hooks
+commands      = commands            # install/apply-conventions.md → commands/apply-conventions.md
+pointer_index = no                  # 네이티브 skill 지원
+lock          = .dev-conventions.lock
+
+[codex]
+config_dir     = ${CODEX_HOME:-$HOME/.codex}
+always_on      = AGENTS.md
+legacy_section = "## Superpowers policy"   # always-on 초안에 흡수됨(설계 §7.4)
+skills        = skills
+settings      = config.toml
+settings_src  = global/enforcement/codex/config.fragment.toml
+hooks_src     =                     # hooks.json 스키마 미검증 → 설치하지 않는다
+commands      =
+pointer_index = no                  # 설계 §13 가정 2에서 판정. 실패하면 yes로 내린다
+lock          = .dev-conventions.lock
+
+[gemini]
+config_dir    = $HOME/.gemini
+always_on     = GEMINI.md
+skills        =                     # 네이티브 skill 없음
+settings      =                     # enforcement 없음
+settings_src  =
+hooks_src     =
+commands      =
+pointer_index = yes
+lock          = .dev-conventions.lock
