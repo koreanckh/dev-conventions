@@ -28,6 +28,7 @@ description: dev-conventions 규칙을 현재 프로젝트에 적용한다 — �
 | 이슈·보드 | `git remote`, `gh issue list`, `gh project list --owner <owner>` |
 | **to-do 번호 체계** | `docs/to-do/*.md`의 `번호:`와 `이슈:` 줄을 **대조**한다. 어긋나면 `todo-numbering: local`이다 |
 | handoff 위치·형태 | `docs/handoff/`·`docs/agent/`의 실제 파일 |
+| **문서 브랜치**(`docs-branch`) | 통합 브랜치가 `main`인지 `dev`인지, main에 직접 push가 막혀 있는지(`gh api repos/<owner>/<repo>/branches/main/protection`) |
 | 운영 문서 | `DEPLOY.md`·`docs/ops/`·`deploy/` |
 | 기존 규칙 복사본 | `docs/conventions/*.md` |
 
@@ -74,7 +75,7 @@ diff <(git -C <SRC> show <복사 시점 커밋>:conventions/<이름>.md) docs/co
 
 조사에서 전역 기본값과 다른 점이 나오면 `<SRC>/project/decision.template.md` → `docs/decisions/NNN-<slug>.md`.
 
-- 자주 나오는 것: `todo-numbering: local`(번호 자체 배정), handoff 형태, 워크트리 미사용.
+- 자주 나오는 것: `todo-numbering: local`(번호 자체 배정 — 기존 저장소만), `docs-branch: branch`(main이 보호돼 문서 직행이 막힘), handoff 형태, 워크트리 미사용.
 - **맥락은 관찰된 사실로 쓴다.** 왜 그렇게 했는지 모르면 지어내지 말고 사용자에게 묻는다.
 - `버린 대안`에 **전역 기본값을 왜 안 쓰는지**를 적는다. 이게 나중에 에이전트가 "정리"하겠다고 되돌리는 걸 막는 유일한 장치다.
 

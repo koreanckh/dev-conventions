@@ -18,7 +18,7 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 ### 커밋 메시지 — Conventional Commits
 - 형식: `type(scope): 설명`.
 - type: `commit-types` 파라미터의 목록. 기본 제안값은 `feat`, `fix`, `chore`, `refactor`, `style`, `docs`, `wip`.
-- `wip`은 **handoff를 동반한 세션 중단 커밋 전용**이다 → [작업 인계](../handoff/SKILL.md). 브랜치를 병합할 땐 squash하거나 정식 type으로 다시 쓴다.
+- `wip`은 **세션 중단 커밋 전용**이다(작업 브랜치에 남기고, 짝이 되는 handoff는 `docs-branch`에 따로 올린다) → [작업 인계](../handoff/SKILL.md). 브랜치를 병합할 땐 squash하거나 정식 type으로 다시 쓴다.
 - scope는 모듈/기능명 (`feat(notification):`, `fix(auth):`, `refactor(db):`).
 - 설명은 한국어 허용. 이슈 참조는 `(#12)` 형태로 뒤에 붙임.
 - commitlint로 강제하지 않고 **관례로 유지**한다 (툴 미설치가 기본).

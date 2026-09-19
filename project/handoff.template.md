@@ -3,12 +3,12 @@
 <!--
 `handoff` 파라미터 디렉터리(기본 `docs/handoff/`)의 `<브랜치명>.md`로 복사해 쓴다(브랜치의 `/`는 `-`로 치환: todo/003-foo → todo-003-foo.md).
 규칙: 덮어쓰기(append 금지) · 한 화면(≈50줄) 이내 · 다른 문서에 있는 내용은 경로로 참조만 · secret 금지.
-브랜치가 병합되면 이 파일도 같은 머지에서 삭제한다. 자세한 규칙은 전역 skill `handoff`(원본: dev-conventions `global/skills/handoff/SKILL.md`).
+이 파일은 작업 브랜치가 아니라 `docs-branch`(기본 `main`)에 직접 커밋한다 — 작업 브랜치를 먼저 push하고 그다음 올린다. 브랜치가 병합되면 `docs-branch`에서 이 파일을 지운다. 자세한 규칙은 전역 skill `handoff`(원본: dev-conventions `global/skills/handoff/SKILL.md`).
 채울 때 이 주석 블록은 지운다.
 -->
 
 - **갱신:** YYYY-MM-DD HH:MM · <home|office>
-- **브랜치:** <branch> (base: main|dev) · 마지막 커밋 `<sha>`
+- **브랜치:** <branch> (base: main|dev) · 마지막 **push된** 커밋 `<sha>`
 - **워크트리:** <경로|없음> — 복원: `git worktree add <경로> <branch>`
 - **TODO:** docs/to-do/NNN-<주제>.md (#NNN)
 - **먼저 읽을 것:** <spec/plan 경로 · 핵심 파일 path:line 2~3개>

@@ -13,10 +13,10 @@
 
 | 규칙 | 문서 | 요약 |
 |---|---|---|
-| TODO 관리 | `global/skills/todo-workflow/SKILL.md` | 번호 = **GitHub 이슈 번호**(3자리 zero-pad, 이슈 먼저 발행해 받는다) + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + 라벨·Auto-add 셋업 · 무거운 항목은 spec/plan 연계 |
+| TODO 관리 | `global/skills/todo-workflow/SKILL.md` | 번호 = **GitHub 이슈 번호**(3자리 zero-pad, 이슈 먼저 발행해 받는다 · 신규 저장소는 `local` 금지) + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + 라벨·Auto-add 셋업 · 보고는 `#NNN : 제목`으로 시작 · 무거운 항목은 spec/plan 연계 |
 | 코딩 컨벤션 | `global/skills/coding-conventions/SKILL.md` | 커밋·훅·주석·자동생성물 + 스택별 실 config는 `project/stacks/<stack>/` |
-| 에이전트 작업 규칙 | `global/skills/agent-workflow/SKILL.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 |
-| 작업 인계 | `global/skills/handoff/SKILL.md` | 브랜치당 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · WIP 커밋과 함께 push · 병합 시 삭제 |
+| 에이전트 작업 규칙 | `global/skills/agent-workflow/SKILL.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 · **문서는 워크트리를 따라가지 않는다** |
+| 작업 인계 | `global/skills/handoff/SKILL.md` | 브랜치당 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · **작업 브랜치가 아니라 `docs-branch`(기본 main)에 직접 커밋**(브랜치 push가 먼저) · 병합 시 거기서 삭제 |
 | 트랜잭션 관리 | `global/skills/transaction-management/SKILL.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |
 | 배포 | `global/skills/deployment/SKILL.md` | 이미지 build와 운영 배포 분리 · 불변 태그 · 실행/교체 전략 선택 · secret/healthcheck/롤백·DB migration 경계 |
 | 리팩토링 원칙 | `global/skills/refactoring-principles/SKILL.md` | 리팩토링은 동작을 안 바꾼다(커밋 분리) · 특성 테스트 먼저 · 공통화 기준은 「같은 이유로 변하는가」 · 갈라진 이유 먼저 읽기 · 멈출 때 · **첫 승격 규칙**(nowhere, 2026-09-18) |
@@ -69,6 +69,7 @@ AGENTS.md                  이 repo 작업 지침 (CLAUDE.md·GEMINI.md는 얇�
 - issues: github:owner/repo
 - decisions: docs/decisions/ — 기존 결정. 뒤집기 전에 읽는다
 - handoff: docs/handoff/
+- docs-branch: main — handoff·to-do 상태·결정 기록은 작업 브랜치가 아니라 여기에 직접 커밋한다
 ```
 
 각 줄은 **혼자 읽혀도 뜻이 통하게** 쓴다(값 + 한 구절). 전역 설치가 없는 환경(클라우드 세션·협업자)에서도 `verify` 줄만 보고 무엇을 해야 하는지 알 수 있어야 한다 — 그게 degraded mode를 공짜로 만든다.
