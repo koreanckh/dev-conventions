@@ -24,6 +24,7 @@
 - todo-numbering: <issue | local> — `issue`면 GitHub 이슈 번호를 그대로 쓴다(기본·신규 저장소는 이것만). `local`은 기존 저장소의 잔존 예외이며 이유를 `decisions`에 남긴다
 - decisions: docs/decisions/ — 기존 결정. 뒤집기 전에 읽는다
 - handoff: docs/handoff/ — 브랜치당 1개. 병합 시 삭제
+- handoff-unit: <생략 | todo> — 생략하면 브랜치 단위. `todo`면 색인 `handoff.md`(열린 갈래 한 줄씩) + `handoff-<todo번호>.md`, to-do가 닫힐 때 지운다. 이유를 `decisions`에 남긴다
 - docs-branch: main — handoff·to-do 상태·결정 기록은 작업 브랜치가 아니라 이 브랜치에 직접 커밋한다
 - ops: <예: DEPLOY.md> — 배포·운영(선택)
 - commit-types: <예: feat, fix, chore, refactor, style, docs, wip> — 이 저장소에서 쓰는 Conventional Commits type

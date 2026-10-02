@@ -2,6 +2,7 @@
 
 <!--
 `handoff` 파라미터 디렉터리(기본 `docs/handoff/`)의 `<브랜치명>.md`로 복사해 쓴다(브랜치의 `/`는 `-`로 치환: todo/003-foo → todo-003-foo.md).
+`handoff-unit: todo`면 `handoff-<todo번호>.md`로 쓰고, 색인 `handoff.md`에 한 줄을 더한다. 수치·배포 기록은 to-do에만 쓰고, to-do가 닫히면 이 파일과 색인 줄을 지운다.
 규칙: 덮어쓰기(append 금지) · 한 화면(≈50줄) 이내 · 다른 문서에 있는 내용은 경로로 참조만 · secret 금지.
 이 파일은 작업 브랜치가 아니라 `docs-branch`(기본 `main`)에 직접 커밋한다 — 작업 브랜치를 먼저 push하고 그다음 올린다. 브랜치가 병합되면 `docs-branch`에서 이 파일을 지운다. 자세한 규칙은 전역 skill `handoff`(원본: dev-conventions `global/skills/handoff/SKILL.md`).
 채울 때 이 주석 블록은 지운다.
