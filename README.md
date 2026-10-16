@@ -14,7 +14,7 @@
 | 규칙 | 문서 | 요약 |
 |---|---|---|
 | TODO 관리 | `global/skills/todo-workflow/SKILL.md` | 번호 = **GitHub 이슈 번호**(3자리 zero-pad, 이슈 먼저 발행해 받는다 · 신규 저장소는 `local` 금지) + md(SSOT) → GitHub Issue → Project Status 동시 갱신 + 라벨·Auto-add 셋업 · 보고는 `#NNN : 제목`으로 시작 · 무거운 항목은 spec/plan 연계 |
-| 코딩 컨벤션 | `global/skills/coding-conventions/SKILL.md` | 커밋·훅·주석·자동생성물 + 스택별 실 config는 `project/stacks/<stack>/` |
+| 코딩 컨벤션 | `global/skills/coding-conventions/SKILL.md` | 커밋·훅·주석·자동생성물 · 검사는 일부러 실패시켜 한 번 본다 · 셸 변수 뒤 한글은 `${var}`(dub, 2026-10-16) + 스택별 실 config는 `project/stacks/<stack>/` |
 | 에이전트 작업 규칙 | `global/skills/agent-workflow/SKILL.md` | lightweight 기본 · 위험 비례 검증 · 병렬 dispatch/워크트리는 승인된 병합 단위에 사용 · **문서는 워크트리를 따라가지 않는다** |
 | 작업 인계 | `global/skills/handoff/SKILL.md` | 브랜치당 1개 · 덮어쓰기 · 한 화면 · 이미 실패한 접근 기록 · **작업 브랜치가 아니라 `docs-branch`(기본 main)에 직접 커밋**(브랜치 push가 먼저) · 병합 시 거기서 삭제 · 병합 시점이 없으면 `handoff-unit: todo`(색인 + 갈래 문서, to-do가 닫힐 때 삭제) · **실패 모드: handoff가 기록 저장소가 된다**(nowhere, 2026-10-02) |
 | 트랜잭션 관리 | `global/skills/transaction-management/SKILL.md` | 언어/프레임워크 무관 원칙 · 짧은 경계 · 부수효과는 커밋 후 · 낙관적 락·멱등성 · 분산 트랜잭션 지양 |

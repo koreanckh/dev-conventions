@@ -19,3 +19,15 @@ bash가 `$pin` 뒤의 한글 첫 바이트까지 변수 이름으로 읽어 `pin
 2. 실패 메시지 경로(검사 스크립트의 `fail …`)는 일부러 실패시켜 한 번씩 돌려 본다. 정상 경로만 돌리면 이런 버그가 남는다.
 
 lint로 잡으려면 shellcheck가 후보지만, 이 경우를 경고하는지는 확인하지 않았다.
+
+## 처리 (2026-10-16)
+
+`global/skills/coding-conventions/SKILL.md`에 반영했다 — 1번은 공통 규칙 「셸 스크립트」, 2번은 한글과 무관한 일반 규칙이라 「검증 게이트」로 나눴다.
+
+재현 확인:
+- macOS `/bin/bash` 3.2.57 + `en_US.UTF-8` → `pin�: unbound variable`, exit 1. 같은 스크립트를 `LC_ALL=C`로 돌리면 정상.
+- `set -u`가 없으면 죽지 않고 `$pin` 값이 빠진 채 `이`의 나머지 바이트가 깨져 나간다(`[\x9d\xb4없다]`).
+- Linux bash 5.3.9(alpine, `C.UTF-8`)에선 정상 — macOS 쪽 문제로 보인다. macOS에 설치한 bash 5는 확인하지 않았다.
+- shellcheck는 설치돼 있지 않아 이번에도 확인하지 않았다.
+
+enforcement(hook으로 패턴 검사)는 관찰 1회라 올리지 않았다. 다시 밟으면 후보로 본다.
