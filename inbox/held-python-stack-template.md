@@ -1,7 +1,7 @@
 # 보류 후보: Python 스택 템플릿 (`project/stacks/python/`)
 
 - **심사:** 2026-10-16 · 판정 **보류**(기각 아님) · 기록은 이 파일 「심사 메모」
-- **원본:** dub(한국어 영상 AI 더빙, `~/sandbox/dub`) 구현 계획 (a1) — `docs/superpowers/plans/2026-10-16-cycle1-a1-foundation.md`의 Global Constraints "환경 관리 원칙"과 Task 1
+- **원본:** dub(한국어 영상 AI 더빙, `~/dev/dub`) 구현 계획 (a1) — `docs/superpowers/plans/2026-10-16-cycle1-a1-foundation.md`의 Global Constraints "환경 관리 원칙"과 Task 1
 - **사용자 방침(2026-10-16):** "개발하기 쉬운 방식 말고 관리하기 좋은 방식" — 버전을 전부 고정하고, 어긋나면 조용히 고치지 말고 실패하게 한다.
 
 ## 되살릴 조건
@@ -29,6 +29,7 @@
 - **공통 규칙 쪽 구멍:** coding-conventions 「공통 규칙」의 `pre-commit 훅 — husky + lint-staged`와 `package-manager` 기본 pnpm은 사실상 node 전용이다. Python 스택을 올릴 때 같이 고친다(아래 「승격 때 같이 고칠 것」).
 - 원안 9번(GPU 컨테이너)은 아직 해 보지 않은 것이라 승격안에서 뺐다(「후속」).
 - 원안의 description 후보는 둘 자리가 없다 — coding-conventions는 skill 하나에 description 하나다. 기존 description에 키워드만 더한다.
+- **2026-10-17 추가:** 승격안 2번의 N을 고르는 기준이 별도 후보 `2026-10-17-pin-to-installable-version.md`로 올라와 있다(처리되면 `inbox/processed/<날짜>/`로 옮겨진다). 승격안은 그대로 올리는 본문이라 기준을 거기 적지 않는다. 그 후보가 coding-conventions에 승격되면 2번에 그 위치를 가리키는 참조만 단다.
 
 ## 승격안
 
