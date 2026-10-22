@@ -6,7 +6,7 @@
 claude/
   settings.fragment.json           # 공통 deny/ask/allow + PreToolUse guard 배선 → ~/.claude/settings.json에 키 단위 병합
   hooks/
-    pre-tool-use-bash-guard.sh     # 인자 위치가 자유로운 위험 패턴 차단(exit 2) — rm -rf /, force push, --no-verify, pipe-to-shell
+    pre-tool-use-bash-guard.sh     # 인자 위치가 자유로운 위험 패턴 차단(exit 2) — rm -rf /, force push, --no-verify, pipe-to-shell, sudo(읽기 전용 prod 래퍼 제외)
     post-tool-use-audit.sh         # 선택. 툴 호출을 날짜별 JSONL로 append(관측용). 기본 미배선
 codex/
   config.fragment.toml             # approval_policy / sandbox_mode 두 키만 → ~/.codex/config.toml에 병합
@@ -39,8 +39,23 @@ codex/
 | 항목 | 이 PC 현재 | 이 파일 | 왜 |
 |---|---|---|---|
 | `.env` 읽기 | `Read(**/.env.*)` 한 줄로 광범위 deny | `.env.local`·`.env.*.local`·`.env.production`을 열거 | deny는 allow 예외를 못 가져서 광범위 deny면 커밋되는 `.env.example`도 못 읽는다. 단 설치는 병합만 하므로 이 PC의 기존 광범위 deny는 그대로 남는다 — 좁히려면 직접 지워야 한다 |
-| 의존성 변경 | ask 없음(`Bash(pnpm:*)` allow) | `pnpm add`/`pnpm remove` ask | 설계 §5.1이 요구. **설치하면 이 PC에 없던 승인 프롬프트가 생긴다.** 실제로 귀찮으면 빼고 그 사실을 기록한다 |
+| 의존성 변경 | ask 없음(`Bash(pnpm:*)` allow) | ~~`pnpm add`/`pnpm remove` ask~~ → 2026-10-22 해제 | 설계 §5.1이 요구했으나 아래 "2026-10-22 조정"에서 뺐다 |
 | `curl`/`wget` | `Bash(curl:*)` allow | 어느 쪽에도 넣지 않음 | 이 PC는 allow, 프로젝트 템플릿은 ask였다. 어느 쪽이 모든 프로젝트에 공통이라고 볼 근거가 없어 전역에서 판정하지 않는다 |
+
+## 2026-10-22 조정 — bypass 모드에서 "파괴적인 것만 묻기"
+
+bypass 모드로 쓰면 allow는 의미가 없고 deny·ask·guard만 남는다. 그 상태에서 되돌릴 수 있는 작업까지 묻던 항목을 정리했다(설계 §5.1의 "push/의존성 변경 ask"를 뒤집는 결정).
+
+| 변경 | 이유 |
+|---|---|
+| deny `Bash(sudo:*)` 제거 → guard의 sudo 패턴으로 이동 | deny는 allow 예외를 못 가져서 chois 서버의 읽기 전용 래퍼(`sudo prod-ps\|prod-stats\|prod-logs\|prod-inspect`)까지 막았다. guard는 이 래퍼만 통과시키고 나머지 명령 위치 sudo는 차단한다. 래퍼가 없는 PC에선 그냥 command not found |
+| ask `rm:*`·`rmdir:*` → `rm -r`·`-R`·`-rf`·`-fr`·`-Rf`·`-fR`만 ask | 단일 파일 삭제는 묻지 않고 재귀 삭제만 묻는다. prefix 매칭이라 `rm -r -f x`, `rm x -rf` 같은 변형은 못 잡는다(루트/홈 대상은 deny·guard가 막음) |
+| ask `git push:*` 제거 | 일반 push는 되돌릴 수 있다. force push는 deny + guard가 막는다. `git push origin --delete`는 prefix로 못 잡으니 주의 |
+| ask `git branch -d:*` 제거 | 병합된 브랜치만 지워진다. `-D`는 유지 |
+| ask `pnpm add/remove:*` 제거 | lockfile diff로 되돌릴 수 있다 |
+| ask `psql:*` 제거 | 읽기 조회까지 묻고 있었다. 스키마 변경 경로(`db:push`·`db:migrate`·`supabase db reset`)는 유지 |
+
+설치기는 **추가만** 하므로, 이미 설치된 PC는 `./bootstrap.sh --uninstall --agent claude && ./bootstrap.sh --agent claude`로 재설치해야 빠진 항목이 지워진다.
 
 ## 기준·대조 기록
 
@@ -58,7 +73,7 @@ codex/
 - guard는 커밋 메시지 안의 `-n` 같은 오탐을 막기 위해 git 플래그 패턴만 **따옴표 내용을 비운 문자열**에 매칭한다.
 - guard는 `jq` → `python3` 순으로 payload를 파싱하고, 둘 다 없으면 **fail-closed(전부 차단)**. 안전장치가 조용히 무력화되는 것보다 낫다고 봤다. 이 동작이 싫으면 해당 분기에서 `exit 0`으로 바꾼다.
 - allow의 패키지 매니저 스크립트명은 `Bash(pnpm:*)`처럼 도구 단위로 넓게 잡았다. 프로젝트별 스크립트명까지 전역에 박지 않는다 — 그건 프로젝트 `.claude/settings.json`의 일이다.
-- `Bash(rm:*)`는 ask다. `rm -rf dist` 같은 프로젝트 안 삭제가 잦으면 그 프로젝트의 `.claude/settings.json`에 `Bash(rm -rf dist)`처럼 **경로를 박은 exact 규칙**을 allow에 추가한다. deny `Bash(rm -rf /*)`·`Bash(rm -rf ~*)`가 먼저 평가되므로 안전.
+- 재귀 `rm`(`rm -rf:*` 등)은 ask다. `rm -rf dist` 같은 프로젝트 안 삭제가 잦으면 그 프로젝트의 `.claude/settings.json`에 `Bash(rm -rf dist)`처럼 **경로를 박은 exact 규칙**을 allow에 추가한다. deny `Bash(rm -rf /*)`·`Bash(rm -rf ~*)`가 먼저 평가되므로 안전.
 
 ## audit hook 배선 (선택)
 
@@ -85,4 +100,6 @@ bash -n claude/hooks/*.sh
 printf '{"tool_input":{"command":"rm -rf /"}}' | bash claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 2
 printf '{"tool_input":{"command":"git commit -m x --no-verify"}}' | bash claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 2
 printf '{"tool_input":{"command":"pnpm test"}}'  | bash claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 0
+printf '{"tool_input":{"command":"sudo id"}}'  | bash claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 2
+printf '{"tool_input":{"command":"sudo prod-ps"}}'  | bash claude/hooks/pre-tool-use-bash-guard.sh; echo $?   # 0
 ```

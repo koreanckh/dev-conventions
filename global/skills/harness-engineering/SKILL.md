@@ -74,8 +74,8 @@ description: .claude/·.codex/·hooks·권한·skills·서브에이전트를 만
 | **C. sandboxed full-auto** | `bypassPermissions` | **컨테이너 + non-root + 네트워크 필터 필수** | 거의 없음 | 야간 배치, 대규모 리팩터 |
 
 - 기본은 **B**. `global/enforcement/claude/settings.fragment.json`이 B이고, 전역 설치본이 이 패턴을 모든 프로젝트에 깐다.
-  - deny: 루트/홈 삭제, `sudo`, `mkfs`, gitignore되는 env 파일과 `~/.ssh`·`~/.aws` 읽기.
-  - ask: `rm -rf *`, `git push`, `git reset --hard`, `git clean`, 의존성 추가/삭제, `curl`/`wget`(외부 통신).
+  - deny: 루트/홈 삭제, `mkfs`, gitignore되는 env 파일과 `~/.ssh`·`~/.aws` 읽기. `sudo`는 읽기 전용 래퍼 예외가 필요해 guard hook에서 막는다.
+  - ask: 재귀 `rm`, `git reset --hard`, `git clean`, `git branch -D`, publish, DB 스키마 변경, `docker rm`. 되돌릴 수 있는 일반 push·의존성 변경은 묻지 않는다(2026-10-22, dev-conventions의 `global/enforcement/README.md`).
   - allow: 프로젝트 스크립트(`pnpm lint/test/build/typecheck/format`), `git status/diff/log/add/commit`.
 - **A → B 이행 기준**: 한 주 승인 프롬프트의 80%가 같은 5개 작업이면, 그 5개를 allow에 이름 박아 넣는다.
 - **B → C 이행 기준**: 셋 다 만족할 때만 — (1) 컨테이너 등 프로세스 밖 경계가 있다 (2) audit hook이 JSONL을 영속 저장소로 보낸다 (3) 롤백 전략이 사전 정의돼 있다. C는 프로세스 안 게이트를 끄는 대신 아래 계층이 막는 구조라서, 컨테이너 밖 C는 패턴이 아니라 사고다.

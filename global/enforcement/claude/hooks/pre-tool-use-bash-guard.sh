@@ -21,7 +21,11 @@ fi
 # 따옴표 안 내용을 비운 버전. 커밋 메시지 속 "-n" 같은 오탐을 막기 위해 git 플래그 패턴은 이쪽에 매칭한다.
 cmd_unquoted="$(printf '%s' "$cmd" | sed -E "s/\"[^\"]*\"/\"\"/g; s/'[^']*'/''/g")"
 
-# 패턴(ERE) / 사유 / 매칭 대상(raw|unquoted)은 같은 인덱스로 짝. 프로젝트 사정에 맞게 추가/삭제한다.
+# sudo는 deny 규칙 대신 여기서 막는다. deny는 allow 예외를 못 가져서 읽기 전용 래퍼까지 막기 때문.
+# 허용 래퍼(chois 서버의 prod 조회용 — 다른 PC엔 없는 명령이라 무해)만 지운 뒤 남은 sudo를 매칭한다.
+cmd_sudo="$(printf '%s' "$cmd_unquoted" | sed -E 's/(^|[;&|(`[:space:]])sudo[[:space:]]+prod-(ps|stats|logs|inspect)([^[:alnum:]_.-]|$)/\1\3/g')"
+
+# 패턴(ERE) / 사유 / 매칭 대상(raw|unquoted|sudo)은 같은 인덱스로 짝. 프로젝트 사정에 맞게 추가/삭제한다.
 # 사유는 에이전트가 읽고 우회로를 찾을 수 있게 구체적으로 쓴다.
 declare -a patterns=(
   # 루트/홈 재귀 삭제 (권한 규칙 Bash(rm -rf /*)의 백스톱 — 플래그 순서가 다른 변형까지)
@@ -37,6 +41,8 @@ declare -a patterns=(
   # pre-commit/pre-push 훅 우회 — 규칙 "--no-verify 금지"의 강제 계층
   'git[[:space:]]+(commit|push|merge)[^|;&]*[[:space:]]--no-verify([[:space:]]|$)'
   'git[[:space:]]+commit[^|;&]*[[:space:]]-n([[:space:]]|$)'
+  # 명령 위치의 sudo (허용 래퍼 제외)
+  '(^|[;&|(`])[[:space:]]*sudo([[:space:]]|$)'
 )
 declare -a reasons=(
   "루트/홈 디렉터리 재귀 삭제"
@@ -47,15 +53,18 @@ declare -a reasons=(
   "force push (필요하면 --force-with-lease)"
   "git --no-verify: 훅 우회 금지 (규칙 위반). 훅이 실패하면 원인을 고친다"
   "git commit -n(--no-verify): 훅 우회 금지 (규칙 위반)"
+  "sudo 금지. 허용되는 건 읽기 전용 래퍼 sudo prod-ps|prod-stats|prod-logs|prod-inspect 뿐이다"
 )
 declare -a targets=(
   raw raw raw raw raw
   unquoted unquoted unquoted
+  sudo
 )
 
 for i in "${!patterns[@]}"; do
   subject="$cmd"
   [ "${targets[$i]}" = "unquoted" ] && subject="$cmd_unquoted"
+  [ "${targets[$i]}" = "sudo" ] && subject="$cmd_sudo"
   if printf '%s' "$subject" | grep -Eq "${patterns[$i]}"; then
     printf 'bash-guard 차단: %s\n  명령: %s\n' "${reasons[$i]}" "$cmd" >&2
     exit 2

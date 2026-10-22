@@ -1,7 +1,6 @@
 {
   "permissions": {
     "deny": [
-      "Bash(sudo:*)",
       "Bash(dd:*)",
       "Bash(mkfs:*)",
       "Bash(chmod 777:*)",
@@ -19,22 +18,21 @@
       "Read(~/.aws/**)"
     ],
     "ask": [
-      "Bash(rm:*)",
-      "Bash(rmdir:*)",
-      "Bash(git push:*)",
+      "Bash(rm -r:*)",
+      "Bash(rm -R:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rm -fr:*)",
+      "Bash(rm -Rf:*)",
+      "Bash(rm -fR:*)",
       "Bash(git reset --hard:*)",
       "Bash(git clean:*)",
-      "Bash(git branch -d:*)",
       "Bash(git branch -D:*)",
       "Bash(git worktree remove:*)",
       "Bash(git checkout -- :*)",
       "Bash(gh repo delete:*)",
       "Bash(gh release create:*)",
-      "Bash(pnpm add:*)",
-      "Bash(pnpm remove:*)",
       "Bash(npm publish:*)",
       "Bash(pnpm publish:*)",
-      "Bash(psql:*)",
       "Bash(pnpm db:push:*)",
       "Bash(pnpm db:migrate:*)",
       "Bash(supabase db reset:*)",

@@ -146,6 +146,7 @@ Q3. (프로젝트) 무엇인가?
 - 원본: `global/enforcement/<agent>/`. 기존 `templates/harness/`를 옮긴다.
 - **먼저 역수집한다.** 현재 `~/.claude/settings.json`에서 이식 가능한 부분(공통 deny/ask/allow)을 추출해 원본에 넣는다. 머신 고유 키(§7.7)는 제외한다.
 - 전역에는 **모든 프로젝트에 공통인 것만**: 파괴 명령 deny, 자격증명 경로 deny, push/reset/의존성 변경 ask, `git status/diff/log` allow.
+  - **2026-10-22 뒤집음:** 일반 push·의존성 변경 ask와 `sudo` deny를 뺐다(sudo는 guard hook으로 이동). 근거와 목록은 `global/enforcement/README.md` "2026-10-22 조정".
 - 프로젝트 고유 allow(그 프로젝트의 스크립트명)는 전역에 넣지 않는다 → 프로젝트 `.claude/settings.json`(§6.4).
 - 설치는 **병합만** 한다. 기존 항목·다른 도구의 hook은 건드리지 않는다(§7.3).
 
