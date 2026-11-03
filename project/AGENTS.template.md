@@ -29,6 +29,7 @@
 - ops: <예: DEPLOY.md> — 배포·운영(선택)
 - commit-types: <예: feat, fix, chore, refactor, style, docs, wip> — 이 저장소에서 쓰는 Conventional Commits type
 - worktree: <생략 | never> — `never`면 이유를 `decisions`에 남긴다
+- design: <예: docs/decisions/003-visual-design.md | 미정> — 화면이 있는 프로젝트만. `미정`이면 테마·새 화면·배치를 만들기 전에 시안 2~3개를 보여 주고 고르게 한다
 
 <!-- 완료 기준처럼 이 프로젝트에서만 참인 규칙은 아래에 한 줄씩. 전역 규칙을 다시 쓰지 않는다. -->
 

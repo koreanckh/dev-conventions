@@ -49,6 +49,7 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 
 ### 셸 스크립트
 - 변수 바로 뒤에 ASCII가 아닌 글자(한글 등)가 오면 `${var}`로 감싼다(`"${pin}이 없다"`, `$pin이` 금지). 헷갈리면 항상 `${var}`. 왜: macOS 기본 `/bin/bash`(3.2)는 UTF-8 로케일에서 한글 첫 바이트까지 변수 이름으로 읽는다. `set -u`면 `unbound variable`로 죽고, 아니면 값이 빠지고 글자가 깨진 문자열이 조용히 나간다. Linux bash(5.3에서 확인)에선 재현되지 않아 CI는 통과하고 로컬에서만 깨진다. 실패 메시지 줄에 잘 숨는다(dub, 2026-10-16).
+- 개발 서버 같은 프로세스를 끌 때 `pkill -f '<패턴>'`을 쓰지 않는다. 포트로 PID를 찾아(`ss -ltnp 'sport = :<포트>'`) 내 uid 프로세스만 끈다. 왜: 에이전트가 도구 셸로 보내면 그 명령줄 자체가 패턴에 맞아 도구 셸이 같이 죽는다(출력 없이 끝난다). 같은 호스트에 다른 uid로 도는 운영 프로세스도 패턴에 걸릴 수 있다(sonmat-lab, 2026-11-03).
 
 ## 스택별 기본값 (`stack` 파라미터에 해당하는 `project/stacks/<stack>/`)
 
@@ -66,6 +67,7 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 - 모듈 간 결합은 직접 import보다 이벤트버스 선호(`@EventHandler(EventName)`).
 - 응답 envelope 통일(`TransformInterceptor`), 전역 `ValidationPipe(whitelist)`, 전역 `HttpExceptionFilter`, 에러 코드 enum 일원화, 인증 가드 전역 + `@Public()` 예외. 이 전역들은 `main.ts`에서 수동 등록하지 말고 **`@Global CommonModule`에서 `APP_PIPE`/`APP_INTERCEPTOR`/`APP_FILTER`/`APP_GUARD` provider로 등록**한다. CommonModule은 인프라 모듈(DB·Storage)을 import/export하는 단일 진입점 역할을 한다.
 - 명령어: `pnpm build`(nest build), `pnpm lint`(`eslint --fix`), `pnpm format`, `pnpm test`(jest). DB(Drizzle): `schema.ts 수정 → db:generate → db:migrate`.
+- 큰 JSON 본문을 받는 서버(로컬 우선 앱의 동기화 서버 등)는 본문 한도를 명시한다(`app.useBodyParser('json', { limit: … })`) — Express 기본값 100KB에서 오프라인에 쌓인 기록의 첫 push가 413으로 막힌다. 작은 본문만 쓰는 단위 테스트로는 못 잡으니 「큰 첫 push」 테스트를 둔다(sonmat-lab, 2026-11-03).
 
 ### React / Vite (프론트 앱) → `project/stacks/vite-react/`
 - React 19 / Vite 5 / TS ~5.6. `target: ES2020` / `module: ESNext` / `moduleResolution: Bundler` / `jsx: react-jsx`. project references(`tsconfig.app.json`/`tsconfig.node.json`).
@@ -81,6 +83,11 @@ description: 코드를 쓰거나 lint·포맷·tsconfig·커밋 규칙 등 스�
 - Next 16 / React 19 / TS 5.x. `target: ES2017` / `module: esnext` / `moduleResolution: bundler` / `jsx: react-jsx` / `strict` / `noEmit` / `isolatedModules` / next plugin. alias `@/*`.
 - ESLint(flat `eslint.config.mjs`): `eslint-config-next/core-web-vitals` + `/typescript`. ignore: `.next/**`, `out/**`, `build/**`, `next-env.d.ts`.
 - **주의:** Next.js는 버전마다 스캐폴딩이 크게 바뀐다(이 스냅샷은 Next 16 · flat config 기준) → 코드 전에 설치된 버전 문서/deprecation 확인. 가능하면 `create-next-app` 산출물에 이 값들을 병합.
+
+### Flutter (스택 config 스냅샷은 아직 없다)
+- drift를 쓰는 위젯 테스트는 기본 설정이면 끝나지 않는다 — drift 스트림이 닫힐 때 쓰는 타이머가 위젯 테스트의 가짜 시계에서 돌지 않아 `flutter test`가 멈춘다. 테스트 DB를 여는 공용 도우미에 기본값으로 둔다(sonmat-lab, Flutter 3.47.9, 2026-11-03):
+  - `DatabaseConnection(NativeDatabase.memory(), closeStreamsSynchronously: true)`로 열고, 끝에 위젯을 내린 뒤 `tester.runAsync(db.close)`.
+  - 스트림이 살아 있을 때 `runAsync` 하나에 DB 쓰기는 한 번만(여러 행은 `batch`). 두 번이면 첫 쓰기로 깨어난 화면 쪽 조회가 잠금을 쥔 채 가짜 시계를 기다려 교착한다.
 
 ### 무빌드 프로젝트 (예: Chrome Extension MV3)
 - lint/format/husky 없이 소스 직접 로드도 허용. 대신 환경 전환은 스크립트로(`config.<env>.js` 복사 등), 하드코딩 편집 금지.

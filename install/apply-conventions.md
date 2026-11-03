@@ -30,6 +30,7 @@ description: dev-conventions 규칙을 현재 프로젝트에 적용한다 — �
 | handoff 위치·형태 | `docs/handoff/`·`docs/agent/`의 실제 파일 |
 | **문서 브랜치**(`docs-branch`) | 통합 브랜치가 `main`인지 `dev`인지, main에 직접 push가 막혀 있는지(`gh api repos/<owner>/<repo>/branches/main/protection`) |
 | 운영 문서 | `DEPLOY.md`·`docs/ops/`·`deploy/` |
+| **화면 유무·디자인 결정**(`design`) | 화면 코드(`lib/`·`src/components/`·`app/`), `decisions`의 디자인 결정, 테마 파일(`theme.dart`·`tailwind.config.*`·CSS 변수 블록) |
 | 기존 규칙 복사본 | `docs/conventions/*.md` |
 
 ## 1. 복사본을 지우기 전에 드리프트를 건진다 (제일 중요)
@@ -57,6 +58,7 @@ diff <(git -C <SRC> show <복사 시점 커밋>:conventions/<이름>.md) docs/co
 
 - 각 파라미터 줄은 **혼자 읽혀도 뜻이 통하게**(값 + 한 구절). 전역 설치가 없는 환경에서 이 줄만 읽고 움직일 수 있어야 한다.
 - 쓰지 않는 파라미터 줄은 지운다. 모르는 값은 채우지 말고 묻는다.
+- 화면이 있는 프로젝트는 `design` 줄을 지우지 않는다. 디자인 결정 문서가 없으면 사용자에게 묻고, 정한 게 없으면 `미정`으로 적는다 — 줄이 빠지면 디자인이 빈칸으로도 드러나지 않는다.
 - 목표 ~30줄, 상한 100줄.
 - `CLAUDE.md`·`GEMINI.md`·`.agents/rules/repository.md`는 `AGENTS.md`를 가리키는 얇은 진입점으로 두고 공통 지침을 복제하지 않는다.
 
