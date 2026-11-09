@@ -81,7 +81,7 @@ def backup(path: Path, rep: Reporter, agent: str):
     rep.act(agent, "backup", str(dest))
 
 
-SURFACE = ("global/always-on.md", "global/skills", "global/enforcement",
+SURFACE = ("global/always-on.md", "global/skills", "global/agents", "global/enforcement",
            "install/targets", "install/apply-conventions.md")
 
 
@@ -283,6 +283,64 @@ def unlink_skills(dest_root: Path, names: list[str], rep: Reporter, agent: str):
         rep.act(agent, "skills", f"빈 디렉터리 제거 → {dest_root}")
 
 
+# ---------------------------------------------------------------- agents (서브에이전트 정의)
+
+def read_agents(repo: Path) -> list[tuple[str, Path]]:
+    """`global/agents/<name>.md` — 파일 하나가 정의 하나다."""
+    root = repo / "global" / "agents"
+    if not root.is_dir():
+        return []
+    return [(f.name, f) for f in sorted(root.glob("*.md")) if f.is_file()]
+
+
+def link_agents(dest_root: Path, repo: Path, mode: str, rep: Reporter, agent: str,
+                known: set[str]) -> list[str]:
+    """skills와 같은 계약을 파일 단위로 적용한다. `known` 밖의 같은 이름 파일은 남의 것으로 보고 건드리지 않는다."""
+    managed: list[str] = []
+    for name, src in read_agents(repo):
+        dest = dest_root / name
+        if dest.is_symlink():
+            if os.readlink(dest) == str(src):
+                managed.append(name)
+                rep.skip(agent, f"agent:{name}", "최신 (심링크)")
+                continue
+            if mode == "link":
+                if not rep.dry:
+                    dest.unlink()
+                rep.act(agent, f"agent:{name}", f"다른 대상({os.readlink(dest)}) → 교체")
+        elif dest.exists():
+            if name not in known:
+                rep.skip(agent, f"agent:{name}", f"건너뜀 — 우리 설치분이 아닌 파일이 이미 있다 ({dest})")
+                continue
+            if mode == "copy" and dest.read_bytes() == src.read_bytes():
+                managed.append(name)
+                rep.skip(agent, f"agent:{name}", "최신 (복사본)")
+                continue
+            if not rep.dry:                # 우리가 넣은 복사본 → 최신 내용으로 교체
+                dest.unlink()
+        if not rep.dry:
+            dest_root.mkdir(parents=True, exist_ok=True)
+            if mode == "copy":
+                shutil.copy2(src, dest)
+            else:
+                dest.symlink_to(src)
+        managed.append(name)
+        rep.act(agent, f"agent:{name}", f"{'복사' if mode == 'copy' else '심링크'} → {dest}")
+    return managed
+
+
+def unlink_agents(dest_root: Path, names: list[str], rep: Reporter, agent: str):
+    for name in names:
+        dest = dest_root / name
+        if dest.is_symlink() or dest.is_file():
+            if not rep.dry:
+                dest.unlink()
+            rep.act(agent, f"agent:{name}", f"제거 → {dest}")
+    if dest_root.is_dir() and not rep.dry and not any(dest_root.iterdir()):
+        dest_root.rmdir()                  # 우리가 만든 빈 디렉터리만 정리한다
+        rep.act(agent, "agents", f"빈 디렉터리 제거 → {dest_root}")
+
+
 # ---------------------------------------------------------------- settings (JSON)
 
 def merge_json(target: Path, fragment: Path, repo: Path, rep: Reporter, agent: str) -> dict:
@@ -470,7 +528,7 @@ def cmd_install(repo: Path, targets: dict, args, rep: Reporter) -> int:
             continue
         lock_file = lock_path(config_dir, t.get("lock", ".dev-conventions.lock"))
         lock = read_lock(lock_file)
-        managed = {"skills": [], "settings": {}, "toml_keys": [], "commands": [], "always_on": ""}
+        managed = {"skills": [], "agents": [], "settings": {}, "toml_keys": [], "commands": [], "always_on": ""}
 
         if t.get("always_on"):
             block = build_block(repo, t.get("pointer_index", "no") == "yes")
@@ -481,6 +539,10 @@ def cmd_install(repo: Path, targets: dict, args, rep: Reporter) -> int:
         if t.get("skills"):
             known = set(lock.get("managed", {}).get("skills", []))
             managed["skills"] = link_skills(config_dir / t["skills"], repo, args.mode, rep, agent, known)
+
+        if t.get("agents"):
+            known = set(lock.get("managed", {}).get("agents", []))
+            managed["agents"] = link_agents(config_dir / t["agents"], repo, args.mode, rep, agent, known)
 
         if t.get("settings") and t.get("settings_src"):
             target = config_dir / t["settings"]
@@ -512,7 +574,7 @@ def cmd_install(repo: Path, targets: dict, args, rep: Reporter) -> int:
 def merge_managed(old: dict, new: dict) -> dict:
     """이번에 추가한 것 + 이전에 추가해 아직 남아 있는 것."""
     out = dict(new)
-    for key in ("skills", "commands", "toml_keys"):
+    for key in ("skills", "agents", "commands", "toml_keys"):
         out[key] = sorted(set(old.get(key, [])) | set(new.get(key, [])))
     merged_settings = {"permissions": {}, "hooks": {}}
     for group in ("permissions", "hooks"):
@@ -559,6 +621,8 @@ def cmd_uninstall(repo: Path, targets: dict, args, rep: Reporter) -> int:
             remove_region(config_dir / managed["always_on"], rep, agent)
         if managed.get("skills") and t.get("skills"):
             unlink_skills(config_dir / t["skills"], managed["skills"], rep, agent)
+        if managed.get("agents") and t.get("agents"):
+            unlink_agents(config_dir / t["agents"], managed["agents"], rep, agent)
         if t.get("settings"):
             target = config_dir / t["settings"]
             if target.suffix == ".json" and managed.get("settings"):

@@ -22,6 +22,7 @@ global/        환경(전역)에 설치되는 것. 강제력 3층
   always-on.md          항상 로드되는 소수 규칙. 15줄 예산
   skills/<name>/SKILL.md  규칙 본문. `description`이 "언제 읽어라" 트리거
   skills/SKILL.template.md  새 skill 골격 (이 repo 안에서만 씀)
+  agents/<name>.md      서브에이전트 정의. 언제 부를지는 skill이 정한다
   enforcement/<agent>/  권한·hook 실파일. 모델이 우회 못 하는 층
 project/       프로젝트에 스캐폴딩되는 것 (템플릿 + 스택 config)
 install/       targets(설치 매핑) · lib/dc_install.py(설치 동작) · apply-conventions.md

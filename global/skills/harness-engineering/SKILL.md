@@ -135,5 +135,6 @@ description: .claude/·.codex/·hooks·권한·skills·서브에이전트를 만
 
 - `verify` — 검증 게이트·Stop hook이 부를 단일 진입점.
 - `generated` — Edit guard로 보호할 경로.
+- 어느 프로젝트에서나 같은 서브에이전트 역할(예: 읽기 전용 `reviewer`)은 **전역 설치본**이 `~/.claude/agents/`에 깐다(원본: dev-conventions `global/agents/`). 프로젝트 `.claude/agents/`에는 그 프로젝트에만 있는 역할만 둔다. 정의는 같은 작업자를 반복해서 띄우게 됐을 때 만든다 — 미리 역할을 나열하지 않는다. `memory` 필드를 켜면 Write·Edit 도구가 자동으로 붙으니 읽기 전용 역할엔 쓰지 않는다.
 - 프로젝트 `.claude/settings.json`에는 **그 프로젝트 고유 allow만** 둔다(스크립트명, `rm -rf dist` 같은 exact 규칙). 전역이 없는 환경을 대비해 최소 deny를 겹쳐 두는 것은 허용한다(백스톱).
 - 전역 설정 파일(`~/.claude/settings.json` 등)은 직접 고치지 않는다. 고칠 일이 생기면 dev-conventions 원본을 고치고 `bootstrap.sh`로 재설치한다.
