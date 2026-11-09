@@ -30,13 +30,14 @@
 - 원안 9번(GPU 컨테이너)은 아직 해 보지 않은 것이라 승격안에서 뺐다(「후속」).
 - 원안의 description 후보는 둘 자리가 없다 — coding-conventions는 skill 하나에 description 하나다. 기존 description에 키워드만 더한다.
 - **2026-10-17 추가:** 승격안 2번의 N을 고르는 기준이 별도 후보 `2026-10-17-pin-to-installable-version.md`로 올라와 있다(처리되면 `inbox/processed/<날짜>/`로 옮겨진다). 승격안은 그대로 올리는 본문이라 기준을 거기 적지 않는다. 그 후보가 coding-conventions에 승격되면 2번에 그 위치를 가리키는 참조만 단다.
+- **2026-11-09 추가:** 그 후보가 승격돼(`inbox/processed/2026-11-09/`) 2번에 참조를 달았다. 같은 날 dub의 Python 함정 4건(round·pytest 마커·pydantic 필드 이름·torch 공유 버퍼)이 coding-conventions 「### Python (스택 config 스냅샷은 아직 없다)」 절로 먼저 올라갔고, `PYTHONUNBUFFERED`는 `long-running-jobs` skill로 갔다. dub (a2)의 torch CUDA 인덱스 고정은 config라 아래 「후속」에 재료로만 붙였다.
 
 ## 승격안
 
 ### 기본 (모든 Python 프로젝트)
 
 1. Python은 uv가 관리하는 인터프리터만: `requires-python = ">=3.X,<3.(X+1)"` + `[tool.uv] python-preference = "only-managed"`. pyenv·Homebrew·conda Python을 섞지 않는다.
-2. uv 버전 고정: `[tool.uv] required-version = ">=0.N,<0.(N+1)"`.
+2. uv 버전 고정: `[tool.uv] required-version = ">=0.N,<0.(N+1)"`. N을 고르는 기준 → coding-conventions 「패키지 매니저 · 워크스페이스」의 검사 전용 버전 고정 줄.
 3. 검증·실행·문서 예시는 전부 `uv run --locked`(`uv lock --check` 포함). `--locked` 없는 `uv run`은 낡은 lock을 조용히 고친다.
 4. 개발 도구: ruff는 `uvx ruff@<버전>`으로 루트에서 한 번, mypy·pytest는 dev 그룹에 `==` 고정. mypy는 프로젝트 의존성을 읽어야 해서 uvx로 빼지 않는다.
 5. ruff: 한국어 주석·메시지를 쓰면 `E501`(줄 길이는 formatter에 맡김)·`RUF001`-`RUF003`을 끈다. 이유를 config 주석으로 남긴다.
@@ -55,6 +56,7 @@
 ### 후속 (아직 해 보지 않음)
 
 - GPU·네이티브 의존성이 큰 실행 단위는 컨테이너(CUDA 베이스 이미지 digest 고정 + `uv sync --locked`) — dub (a2)에서 해 본 뒤 보강한다.
+- **dub (a2) 실측 재료(2026-10-18, `inbox/processed/2026-11-09/2026-10-18-dub-a2-lessons.md` 4번):** PyPI 기본 torch(2.11 이후)는 CUDA 13을 요구해 드라이버 550(CUDA 12.4까지) 서버에서 돌지 않는다. torchaudio는 2.11에서 개발이 끝났고 torch 버전을 정확히 요구한다. 해법: `[[tool.uv.index]]`로 cu12x 인덱스를 `explicit = true`로 두고 `torch = [{ index = "...", marker = "sys_platform == 'linux'" }]`로 Linux에만 건다. Mac 개발 장비는 같은 lock으로 PyPI 휠을 받는다. `environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]`로 lock을 좁힌다. 모델마다 torch 버전이 갈리면 단계(프로젝트)별로 환경을 나눈다. 승격 때 dub의 실제 pyproject 블록을 스냅샷으로 가져온다.
 
 ## 되살릴 때 확인할 사실 (재심사 아님)
 
@@ -67,7 +69,7 @@
 
 ## 승격 때 같이 고칠 것
 
-- `global/skills/coding-conventions/SKILL.md` — 「스택별 기본값」에 `### Python / uv → project/stacks/python/`. 공통 규칙의 `pre-commit 훅 — husky + lint-staged`를 node 한정으로 적고 Python 쪽(검사 진입점 `scripts/check`, 훅 도입 여부)을 정하거나 「알려진 불일치」에 남긴다. `package-manager` 설명에 Python은 uv.
+- `global/skills/coding-conventions/SKILL.md` — 「스택별 기본값」의 `### Python (스택 config 스냅샷은 아직 없다)` 절(2026-11-09 생김)을 `### Python / uv → project/stacks/python/`로 바꾼다. 그 절의 함정 줄은 그대로 둔다. 공통 규칙의 `pre-commit 훅 — husky + lint-staged`를 node 한정으로 적고 Python 쪽(검사 진입점 `scripts/check`, 훅 도입 여부)을 정하거나 「알려진 불일치」에 남긴다. `package-manager` 설명에 Python은 uv.
 - 같은 문서 description에 키워드 추가(예: "…lint·포맷·tsconfig·uv/lock·커밋 규칙 등 스택 기본값을 정할 때").
 - `project/AGENTS.template.md` — `stack`·`package-manager` 예시 값에 `python`·`uv`.
 - `README.md` 규칙 목록 표의 코딩 컨벤션 행.

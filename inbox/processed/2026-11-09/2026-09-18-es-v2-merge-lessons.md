@@ -37,5 +37,5 @@
 
 ## 사람이 결정할 것
 
-- [ ] A를 `coding-conventions`에 넣을까? (권고: 예. enforcement는 보류)
-- [ ] B를 `harness-engineering`에 넣을까? (권고: 예. 1·2는 도구 사실, 3은 관찰 1회라 "n=1" 표시를 달아서)
+- [x] A를 `coding-conventions`에 넣을까? (권고: 예. enforcement는 보류) → 2026-11-09 「### 스테이징」 절로. enforcement 보류
+- [x] B를 `harness-engineering`에 넣을까? (권고: 예. 1·2는 도구 사실, 3은 관찰 1회라 "n=1" 표시를 달아서) → 2026-11-09 「주의」에 셋 다, 3은 n=1 표시

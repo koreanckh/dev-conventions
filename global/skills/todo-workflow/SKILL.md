@@ -51,16 +51,17 @@ description: TODO/백로그를 만들거나 상태를 바꿀 때, 또는 무거�
 번호를 GitHub에서 받아와야 하므로 **이슈를 먼저 만든다.** 내용의 SSOT는 여전히 md이고, GitHub가 맡는 건 발번뿐이다. 아래 1~4는 **같은 턴에 끝낸다** — `draft-` 파일이 커밋에 남으면 안 된다.
 
 1. **초안 작성** — `docs/to-do/draft-<주제>.md`에 템플릿대로 내용을 채운다. 번호 자리(`#000`)와 `이슈:` 줄은 비워둔다.
-2. **이슈 생성 → 번호 획득** — 제목엔 아직 번호를 넣지 않는다(번호를 모르는 상태다).
+2. **이슈 생성 → 번호 획득 → Project에 넣기** — 제목엔 아직 번호를 넣지 않는다(번호를 모르는 상태다). `--project`는 쓰지 않고 만든 뒤 `item-add`로 넣는다(→ 아래 "매 작업에서 에이전트가 확인할 것").
    ```sh
-   # Project 접근이 처음이면 먼저: gh auth refresh -s project
+   # Project 권한이 없으면 사람에게 먼저 받게 한다 → 아래 "Project 권한 받기"
    URL=$(gh issue create --repo <owner/repo> \
      --title "<제목>" \
      --body-file docs/to-do/draft-<주제>.md \
-     --label "status:대기" --label "priority:<상|중|하>" \
-     --project "<Project title>")
+     --label "status:대기" --label "priority:<상|중|하>")
    N=${URL##*/}                  # 이슈 번호 (예: 7)
    NNN=$(printf '%03d' "$N")     # 파일·문서 표기 (예: 007)
+   ITEM=$(gh project item-add <project-number> --owner <project-owner> \
+     --url "$URL" --format json --jq .id)   # Status를 바꿀 때 이 id를 그대로 쓴다
    ```
 3. **번호 확정** — 파일을 rename하고 md 안의 번호를 채운다.
    ```sh
@@ -102,9 +103,20 @@ gh label create "priority:중"   --repo "$REPO" --color FBCA04 --description "�
 gh label create "priority:하"   --repo "$REPO" --color C2E0C6 --description "우선순위 하"
 ```
 
+### Project 권한 받기 — 사람이 일반 터미널에서 한다
+
+대화창 `!`로는 안 된다(비대화형이라 `--hostname required when not running interactively`로 끝난다). 에이전트는 아래를 사람에게 안내한다.
+
+1. `gh auth refresh -h github.com -s project`
+2. `Press Enter to open ...`에서 **Enter를 누른다.** 누르지 않고 브라우저를 따로 열어 승인하면 gh가 승인 결과를 받으러 가지 않아 권한이 그대로다.
+3. 브라우저에서 코드를 넣고 승인 → 터미널에 `✓ Authentication complete.`가 떠야 끝이다.
+4. 확인: `gh api -i user`의 `X-Oauth-Scopes`에 `project`가 있다.
+
+설정 화면의 fine-grained PAT에선 개인 계정 Projects 권한을 고를 수 없지만, gh는 OAuth 토큰(`gho_`)이라 무관하다 — 「gh로는 Projects를 못 다룬다」는 오해의 출처다(dub, 2026-10-19).
+
 ### Project 1회 셋업
 
-`gh`가 Project를 못 읽으면 먼저 권한을 받는다: `gh auth refresh -s project` → `gh project list --owner <project-owner>`.
+`gh`가 Project를 못 읽으면 먼저 위 "Project 권한 받기" → `gh project list --owner <project-owner>`로 확인.
 
 1. Project의 `Workflows` → `Auto-add to project`에서 대상 repository를 선택하고 필터를 `is:issue`로 설정한 뒤 켠다. repo의 일부 Issue만 TODO라면 전용 라벨을 만들고 `is:issue label:<전용라벨>`처럼 좁힌다.
 2. 기본 workflow에서 `Item added to project → Todo`, `Item closed → Done`, `Item reopened → Todo`를 켠다.
@@ -115,10 +127,10 @@ gh label create "priority:하"   --repo "$REPO" --color C2E0C6 --description "�
 
 ### 매 작업에서 에이전트가 확인할 것
 
-- Issue 생성 시 `gh issue create --project "<Project title>"`로 Project 소속을 보장한다. Auto-add는 안전망이다.
+- Issue를 만든 직후 `gh project item-add`로 Project 소속을 보장한다(위 워크플로 2번). Auto-add는 안전망이다. `gh issue create --project`는 gh가 Projects(classic)까지 조회하다 폐지 오류(`Projects (classic) is being deprecated`)로 **이슈 생성 자체가 실패하는** 버전이 있다(gh 2.45.0, Ubuntu 패키지 — money-fab, 2026-10-29). 두 단계 방식은 버전과 무관하게 된다.
 - `대기 → 진행`처럼 Issue가 열린 채 상태만 바뀌는 경우 Project `Status`도 명시적으로 `In Progress`로 바꾼다. Issue 라벨 변경만으로 보드 컬럼이 이동했다고 가정하지 않는다.
 - 완료/재오픈은 Project 기본 workflow 결과까지 확인한다.
-- Project/필드 ID가 필요한 CLI 작업은 다음 조회 결과로 `gh project item-edit` 인자를 채운다:
+- Project/필드 ID가 필요한 CLI 작업은 다음 조회 결과로 `gh project item-edit` 인자를 채운다(방금 `item-add`한 항목이면 그 `id`를 `--id`에 바로 쓴다 — `item-list`로 다시 찾지 않는다):
   ```sh
   gh project view <project-number> --owner <project-owner> --format json
   gh project field-list <project-number> --owner <project-owner> --format json
@@ -131,7 +143,7 @@ gh label create "priority:하"   --repo "$REPO" --color C2E0C6 --description "�
 ## 주의
 
 - **이슈를 못 만들면 번호도 없다.** `gh`가 실패하거나 오프라인이면 `draft-<주제>.md`로 남기고, 번호를 임의로 찍지 않는다. 이 상태로 손을 떼야 하면 draft 경로와 미발행 사실을 보고한다(브랜치 작업이면 handoff의 `다음 한 수`에).
-- `gh project` 또는 `--project`가 `not found`, `Resource not accessible`로 실패하면 프로젝트가 없다고 단정하지 말고 `gh auth refresh -s project` 후 재시도한다.
+- `gh project` 또는 `--project`가 `not found`, `Resource not accessible`로 실패하면 프로젝트가 없다고 단정하지 말고, 사람에게 "Project 권한 받기"를 요청한 뒤 재시도한다. 에이전트가 대화창에서 대신 실행하지 않는다.
 - gh 토큰이 **Issues/Projects 전용 fine-grained PAT**면 코드(Contents) API는 접근 불가하다. 코드 변경은 기존 SSH/git 경로로만.
 - Project 권한이나 UI 설정 때문에 세 곳을 모두 갱신하지 못했으면 정확한 실패 명령/대상을 보고하고 동기화 완료라고 말하지 않는다.
 

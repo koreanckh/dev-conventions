@@ -1,6 +1,6 @@
 ---
 name: deployment
-description: Docker/GitHub Actions/운영 배포·롤백을 만들거나 바꿀 때
+description: Docker/GitHub Actions/운영 배포·롤백을 만들거나 바꿀 때, 또는 로컬·CI에서 DB 컨테이너가 준비되길 기다리는 스크립트·healthcheck를 쓸 때
 ---
 
 # 배포 컨벤션
@@ -111,6 +111,7 @@ blue/green은 새 인스턴스를 먼저 띄우고 healthcheck를 통과한 뒤 
 - nginx 변경은 `nginx -t` 성공 후 reload한다. 새 설정이 실패하면 기존 링크/config로 복구하고 기존 정상 컨테이너를 유지한다.
 - healthcheck는 최소한 서버 내부 endpoint와 공개 도메인을 나눠 확인한다. 인증이 필요한 서비스는 공개되지 않은 전용 health endpoint 또는 TCP check를 쓴다.
 - 공개 healthcheck 실패를 DNS/TLS 초기 셋업 때문에 허용한다면 그 조건을 최초 배포 절차에만 한정한다. 일상 배포에서 무조건 무시하지 않는다.
+- **postgres 컨테이너가 준비됐는지는 `pg_isready`가 아니라 실제 쿼리로 본다**(로컬·CI·compose `healthcheck` 모두). 공식 이미지의 entrypoint는 `docker-entrypoint-initdb.d`를 돌리려고 임시 서버를 띄웠다 내리고 본 서버를 다시 띄우는데, `pg_isready`는 그 임시 서버에도 응답한다 — 기다림 루프가 곧바로 빠져나왔고 이어진 `psql`이 `the database system is shutting down`으로 실패했다(rawtolaw, 2026-10-21). initdb가 만드는 DB에 붙어야 init이 끝났다는 게 보장된다: `until docker compose exec -T db psql -U <user> -d <initdb가 만드는 DB> -tAc 'select 1' >/dev/null 2>&1; do sleep 1; done`.
 - 배포가 끝나기 전에 이전 이미지를 지우지 않는다. 새 버전과 공개 경로가 확인된 뒤 보존 정책에 따라 정리한다.
 
 ## DB 마이그레이션과 롤백

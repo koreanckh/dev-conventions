@@ -119,6 +119,10 @@ description: .claude/·.codex/·hooks·권한·skills·서브에이전트를 만
 ## 주의 / 알려진 불일치
 
 - **`--dangerously-skip-permissions` / `bypassPermissions`를 홈 디렉터리 자격증명(`~/.ssh`, `~/.aws`, 토큰)이 닿는 호스트에서 켜지 않는다.** 컨테이너 안에서만. 프로덕션 repo에서 "이번 한 번만"도 금지.
+- **비밀값 deny를 `Read(**/.env.*)`처럼 넓게 두면 `.env.example`까지 막힌다.** 읽기만이 아니라 Edit/Write와 `sed -i`도 `File is covered by a Read deny rule`로 거부되고(`cp`는 통과해서 같은 파일이 경로마다 다르게 취급된다), 에이전트가 템플릿을 관리하지 못해 실제 설정과 어긋난다(rawtolaw, 2026-10-21). deny는 allow 예외를 못 가지므로 **열거형**(`.env`·`.env.local`·`.env.*.local`·`.env.production`)으로 둔다 — 전역 fragment가 그 형태다. 설치기는 추가만 하므로 예전 광범위 deny가 남은 PC는 직접 지운다. 좁힐 수 없는 환경이면 프로젝트 문서에 「`.env.example`은 사람이 고친다」를 적는다.
+- **Claude Code도 프로젝트 `.claude/settings.json`의 `permissions.allow`를 워크스페이스 trust 전엔 무시한다**(`Ignoring 6 permissions.allow entries from .claude/settings.json: this workspace has not been trusted.`). 새 환경에서 프로젝트 백스톱은 자동이 아니다 — 첫 대화형 실행의 trust 수락(또는 `.claude.json`의 `hasTrustDialogAccepted`)이 필요하다(2026-09-18 실측).
+- **Claude Code 자격증명은 설정 디렉터리 경로마다 Keychain 항목이 갈린다**(기본 `Claude Code-credentials`, `CLAUDE_CONFIG_DIR`을 주면 경로 해시가 붙은 별도 항목). 빈 `CLAUDE_CONFIG_DIR`로는 로그인 없이 `claude -p`가 안 돈다. 「전역 설치 없는 환경」을 흉내 내려면 인증된 프로필에서 설치분만 걷어낸다(2026-09-18 실측).
+- **지침 파일끼리의 우선순위 싸움은 실제로 일어나고, 빠진 쪽이 진다.** 같은 과제에서 always-on의 lightweight 정책이 있는 세션은 절차 skill을 부르지 않았고, 없는 세션은 Superpowers의 SessionStart 주입(「1% 확률이라도 skill을 불러라」)을 따라 시작하자마자 `systematic-debugging`을 불렀다(n=1, 2026-09-18). 덮어쓰는 지침을 옮기거나 지울 땐 그 덮어쓰기도 같이 사라진다.
 - `Write(경로)` 규칙은 Claude Code가 무시한다(경고만). 파일 쓰기 제한은 `Edit(경로)`로.
 - `Bash(command:...)`처럼 인자 필드를 직접 제약하는 규칙은 복합 명령으로 우회 가능해서 무시된다. `Bash(rm *)` 형태로.
 - 권한 규칙 표기는 블로그마다 다르다(`:*` vs ` *`, `tool == "Edit"` 같은 비공식 matcher). 공식: `Bash(git push *)`(`:*`와 동등), hook `matcher`는 툴 이름/정규식. `global/enforcement/README.md`에 대조 기록.
