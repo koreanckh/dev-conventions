@@ -20,3 +20,9 @@
 같이 본 반대쪽 원인(별도 후보로 다룰지 심사 때 판단): 세션 B가 공용 clone에서 `git switch -c`를 해서 모든 세션의 HEAD가 함께 옮겨졌다. 코드 브랜치 작업은 처음부터 워크트리에서 하고, 공용 clone은 `docs-branch`에 두는 쪽(agent-workflow 「작업 격리」)이 짝이다.
 
 재사용 이유: 한 저장소에 세션 여럿(Orca 워크트리, 병렬 Claude/Codex)을 붙이는 일이 흔해졌다. 「to-do·handoff는 `docs-branch`에 직접 커밋」 규칙이 있는 모든 저장소에서, 공용 clone에서 커밋하는 한 같은 섞임이 생긴다.
+
+## 처리 (2026-11-19)
+
+- 규칙 4줄: handoff 「`docs-branch` 문서를 어디서 고치나」에 불릿 2개로 넣었다(공용 clone이면 세션 전용 워크트리 · 커밋 직전 브랜치·스테이징 확인). 워크트리는 `--detach`로 띄우게 적었다 — 같은 절의 「임시 워크트리를 남기면 `git switch main`이 막힌다」와 충돌하지 않게.
+- 같은 절의 「이때만 임시 워크트리」는 경우가 둘이 돼 「이때는」으로 풀었다. `pull` 불릿에는 `no tracking information` 실패가 신호였다는 한 문장을 덧붙였다.
+- 반대쪽 원인(공용 clone에서 `git switch -c`): 별도 후보로 빼지 않고 agent-workflow 「작업 격리」에 한 줄로 넣었다.

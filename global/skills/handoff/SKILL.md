@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: handoff 문서를 쓰거나(무엇을 담고 무엇을 빼나) 병합·to-do 종료 때 정리할 때, handoff가 길어져 손볼 때, 또는 작업 브랜치에 있는 동안 docs-branch 문서(handoff·to-do·결정 기록)를 고칠 때
+description: handoff 문서를 쓰거나(무엇을 담고 무엇을 빼나) 병합·to-do 종료 때 정리할 때, handoff가 길어져 손볼 때, 또는 작업 브랜치에 있거나 여러 세션이 같은 clone을 쓰는 동안 docs-branch 문서(handoff·to-do·결정 기록)를 고칠 때
 ---
 
 # 작업 인계(handoff) 규칙
@@ -122,7 +122,7 @@ handoff는 **작업의 기준 문서가 아니다.** 무엇을 할지·어디까
    git push -u origin <branch>
    git rev-parse --short HEAD                    # 이 sha를 handoff 헤더에 적는다
    ```
-2. **handoff를 갱신해 `docs-branch`에 올린다**(덮어쓰기 + 낡은 내용 삭제). 워크트리에서 작업 중이면 파일은 main이 체크아웃된 원래 clone 쪽에 쓴다 — 워크트리에서 브랜치를 갈아타지 않는다.
+2. **handoff를 갱신해 `docs-branch`에 올린다**(덮어쓰기 + 낡은 내용 삭제). 워크트리에서 작업 중이면 파일은 main이 체크아웃된 원래 clone 쪽에 쓴다 — 워크트리에서 브랜치를 갈아타지 않는다. 그 clone을 다른 세션도 쓰고 있으면 거기서 커밋하지 않는다 → 아래 "`docs-branch` 문서를 어디서 고치나".
    ```sh
    MAIN=<main이 체크아웃된 경로>                   # 워크트리를 안 쓰면 현재 저장소
    git -C "$MAIN" pull --rebase                  # 다른 브랜치의 handoff가 먼저 올라와 있을 수 있다
@@ -159,8 +159,10 @@ handoff는 **작업의 기준 문서가 아니다.** 무엇을 할지·어디까
 
 - **기본 배치: 원래 clone = `docs-branch`, 작업 브랜치 = 워크트리.** 문서는 원래 clone에서 고친다(위 "떠날 때" 2번). 워크트리를 쓰지 않으면 브랜치 코드를 먼저 커밋하고 `docs-branch`로 전환해 고친 뒤 돌아온다.
 - **작업 브랜치 체크아웃에서 고쳐 옮기지 않는다**(`stash` → `switch` → `stash pop`). 브랜치는 `docs-branch`의 문서 커밋을 받지 않아 그쪽 사본은 갈수록 낡고, 먼저 올라간 행과 같은 자리에서 충돌한다(dub, 2026-10-18).
-- **원래 clone이 작업 브랜치에 있고 장기 실행 프로세스가 그 작업 트리를 읽고 있으면 체크아웃을 바꾸지 않는다** — 다음 단계 프로세스가 import에 실패한다. 이때만 `docs-branch`를 임시 워크트리로 띄워 커밋·push하고, **끝나는 즉시 `git worktree remove`**한다. 남겨 두면 원래 clone에서 `git switch main`이 막히고(한 브랜치는 한 워크트리에만 체크아웃된다), 세션 작업 디렉터리가 임시 경로에 남는다(dub 2026-10-19, rawtolaw 2026-10-21).
-- **`pull` 성공을 확인한 뒤 편집·커밋한다.** `git pull --rebase && <편집>` 다음 줄에 `git add … && git commit`을 두면, pull이 실패했을 때 편집만 건너뛰고 커밋·push는 돈다 — 「to-do 갱신」 커밋에 to-do가 빠졌다(money-fab, 2026-10-29). 한 체인으로 묶거나 `set -e`를 두고, 커밋 뒤 `git show --stat HEAD`로 의도한 파일이 들어갔는지 본다.
+- **원래 clone이 작업 브랜치에 있고 장기 실행 프로세스가 그 작업 트리를 읽고 있으면 체크아웃을 바꾸지 않는다** — 다음 단계 프로세스가 import에 실패한다. 이때는 `docs-branch`를 임시 워크트리로 띄워 커밋·push하고, **끝나는 즉시 `git worktree remove`**한다. 남겨 두면 원래 clone에서 `git switch main`이 막히고(한 브랜치는 한 워크트리에만 체크아웃된다), 세션 작업 디렉터리가 임시 경로에 남는다(dub 2026-10-19, rawtolaw 2026-10-21).
+- **여러 세션이 같은 clone을 쓰면 그 clone의 HEAD·인덱스를 믿지 않는다.** 다른 세션이 언제든 브랜치를 바꾸거나 파일을 스테이징해 둘 수 있어, 위 기본 배치(「문서는 원래 clone에서 고친다」)가 깨진다 — 다른 세션이 `git switch -c` 뒤 스테이징해 둔 파일 7개가 to-do 커밋 메시지를 달고 그 세션의 브랜치에 커밋됐고, 정작 to-do 수정은 빠졌다(ness, 2026-11-19). 이 경우 `docs-branch` 문서는 **그 세션 전용 워크트리**에서 고친다. `git worktree add --detach <scratchpad>/<repo>-docs origin/<docs-branch>`로 띄우고, 고치기 전에 `git pull --rebase origin <docs-branch>`, push는 `git push origin HEAD:<docs-branch>`. 브랜치를 체크아웃하지 않으므로(detached) 다른 체크아웃의 `git switch`를 막지 않아 세션 동안 두고 써도 된다 — 세션이 끝나면 `git worktree remove`.
+- **커밋 직전에 브랜치와 스테이징을 확인한다.** `git branch --show-current`와 `git diff --cached --name-status`가 예상(브랜치 이름 · 내가 고친 파일만)과 다르면 멈춘다. rename은 `--name-only`에 새 경로만 나오므로 `--name-status`로 본다. 경로를 지정해 커밋하면(`git commit -- <경로>`) 인덱스에 있던 다른 변경이 섞이지 않는다.
+- **`pull` 성공을 확인한 뒤 편집·커밋한다.** `git pull --rebase && <편집>` 다음 줄에 `git add … && git commit`을 두면, pull이 실패했을 때 편집만 건너뛰고 커밋·push는 돈다 — 「to-do 갱신」 커밋에 to-do가 빠졌다(money-fab, 2026-10-29). 한 체인으로 묶거나 `set -e`를 두고, 커밋 뒤 `git show --stat HEAD`로 의도한 파일이 들어갔는지 본다. pull이 `There is no tracking information for the current branch`로 실패하면 체크아웃이 예상한 브랜치가 아니라는 신호다(ness, 2026-11-19).
 
 ## 주의
 
